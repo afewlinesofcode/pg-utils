@@ -5,14 +5,15 @@
  *      Author: stas
  */
 
-#ifndef YS_PGQ_QUERY_LIMIT_H
-#define YS_PGQ_QUERY_LIMIT_H
+#ifndef YS_PGU_QUERY_LIMIT_H
+#define YS_PGU_QUERY_LIMIT_H
 
 #include <ostream>
 #include <string>
 
 namespace ys {
 namespace pgu {
+namespace query {
 
 class query_limit {
 public:
@@ -41,7 +42,8 @@ private:
 	}
 };
 
-} /* namespace pg */
+} /* namespace query */
+} /* namespace pgu */
 } /* namespace ys */
 
-#endif /* SRC_YS_PGQ_QUERY_LIMIT_H_ */
+#endif /* YS_PGU_QUERY_LIMIT_H */
