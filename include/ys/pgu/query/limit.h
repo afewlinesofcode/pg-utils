@@ -1,22 +1,23 @@
 /*
- * query_offset.h
+ * query_limit.h
  *
  *  Created on: 3 дек. 2015 г.
  *      Author: stas
  */
 
-#ifndef SRC_YS_PGQ_QUERY_OFFSET_H_
-#define SRC_YS_PGQ_QUERY_OFFSET_H_
+#ifndef YS_PGU_QUERY_LIMIT_H
+#define YS_PGU_QUERY_LIMIT_H
 
 #include <ostream>
 #include <string>
 
 namespace ys {
 namespace pgu {
+namespace query {
 
-class query_offset {
+class limit {
 public:
-	query_offset(unsigned count = 0) :
+	limit(unsigned count = 0) :
 			_value(count) {
 	}
 
@@ -35,13 +36,14 @@ public:
 private:
 	unsigned _value;
 
-	friend std::ostream& operator <<(std::ostream& os, const query_offset& o) {
+	friend std::ostream& operator <<(std::ostream& os, const limit& o) {
 		if (o.empty()) return os;
-		return os << " offset " << o.to_string() << ' ';
+		return os << " limit " << o.to_string() << ' ';
 	}
 };
 
-} /* namespace pg */
+} /* namespace query */
+} /* namespace pgu */
 } /* namespace ys */
 
-#endif /* SRC_YS_PGQ_QUERY_OFFSET_H_ */
+#endif /* YS_PGU_QUERY_LIMIT_H */

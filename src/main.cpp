@@ -5,8 +5,8 @@
  *      Author: stas
  */
 
-#include <ys/pgu/cond_expr.h>
-#include <ys/pgu/query_builder.h>
+#include <ys/pgu/query/cond_expr.h>
+#include <ys/pgu/query/query.h>
 #include <cstdint>
 #include <string>
 #include <iostream>
@@ -45,19 +45,21 @@ int main(int argc, char* argv[]) {
 //
 //	auto modified = rec.get_modified();
 
-//	using ys::pgu::query;
-//	using e = ys::pgu::cond_expr;
-//
-//	auto q = query::select_from("test")
-//			.columns("test.a, test.b")
-//			.where( (e("a < $aval") && e("b = $bval")) || (e("c > $aval") && e("a = $bval")) )
-//			.groupby("test.asd")
-//			.having("count(q) = 5")
-//			.orderby("test.id")
-//			.limit(15)
-//			.offset(142);
-//
-//	cout << q.to_string() << endl;
+	{
+		using namespace ys::pgu::query;
+		using e = cond_expr;
+
+		auto q = select_from("test")
+				.columns("test.a, test.b")
+				.where( (e("a < $aval") && e("b = $bval")) || (e("c > $aval") && e("a = $bval")) )
+				.groupby("test.asd")
+				.having("count(q) = 5")
+				.orderby("test.id")
+				.limit(15)
+				.offset(142);
+
+		cout << q.to_string() << endl;
+	}
 
 	return 0;
 }

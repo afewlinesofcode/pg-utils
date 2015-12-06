@@ -15,7 +15,7 @@ namespace query {
 /*!
  * Enumeration of available query operations.
  */
-enum op {
+enum type {
 	select,//!< For building SELECT query.
 	insert,//!< For building INSERT query.
 	update,//!< For building UPDATE query.
