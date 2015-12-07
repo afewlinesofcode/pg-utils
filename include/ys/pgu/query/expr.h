@@ -24,9 +24,6 @@ public:
 			_expr { e } {
 	}
 
-	virtual ~expr() {
-	}
-
 	void clear() {
 		_expr.clear();
 	}
