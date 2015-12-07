@@ -5,28 +5,51 @@
  *      Author: stas
  */
 
-#ifndef INCLUDE_YS_PGU_EXPR_H_
-#define INCLUDE_YS_PGU_EXPR_H_
+#ifndef YS_PGU_EXPR_H
+#define YS_PGU_EXPR_H
 
 #include <iostream>
+#include <string>
 
 namespace ys {
 namespace pgu {
 
-using namespace std;
+inline std::string
+  to_string(const char* __val)
+  { return std::string{__val}; }
 
 class expr {
 public:
-	virtual ~expr() {
-		cout << "~expr\n";
+	expr() {}
+
+	template<typename T>
+	expr(T e) {
+		using namespace std;
+
+		_expr = to_string(e);
 	}
 
-	virtual void show() {
-		cout << "expr\n";
+	virtual ~expr() {
+	}
+
+	std::string str() const {
+		return _expr;
+	}
+
+	expr& operator+(const expr& e) {
+		_expr.append("+").append(e.str());
+		return *this;
+	}
+
+private:
+	std::string _expr;
+
+	friend std::ostream& operator << (std::ostream& os, const expr& e) {
+		return os << e.str();
 	}
 };
 
 }
 }
 
-#endif /* INCLUDE_YS_PGU_EXPR_H_ */
+#endif /* YS_PGU_EXPR_H */

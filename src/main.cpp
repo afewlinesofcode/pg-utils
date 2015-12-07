@@ -77,35 +77,16 @@ int main(int argc, char* argv[]) {
 
 	{
 		using namespace std;
-		using namespace ys::pgu;
-		using e = expr;
+		using _ = ys::pgu::expr;
 
-		using expr_t = shared_ptr<expr>;
-
-		class myexpr: public expr {
-		public:
-			void show() override {
-				cout << "myexpr\n";
-			}
-
-			~myexpr() {
-				cout << "~myexpr\n";
-			}
-		};
+		cout << _{5} + "test.a" << endl;
 
 		/*
 		Examples:
-		expr{} & (e{5} > e{3}) || (e{"$val"} > e{5});
+		(_{5} > 3) || (_{"$val"} > _5);
 		expr{} & "select from" & relation & where;
 		*/
-		vector<expr_t> exprs{};
-
-		exprs.emplace_back(new expr{});
-		exprs.emplace_back(new myexpr{});
-
-		for (expr_t& e: exprs) {
-			e->show();
-		}
+//		select_from("trackers.log") & where(_r{"datetime"}.between("123", "234") & _{"drift"} == 0);
 	}
 
 return 0;
