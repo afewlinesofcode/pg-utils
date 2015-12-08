@@ -8,13 +8,15 @@
 #ifndef YS_STRING_BASIC_EXPR_H
 #define YS_STRING_BASIC_EXPR_H
 
-#define YS_STRING_BASIC_EXPR_DEFINE_M(name, type)\
+#define YS_STRING_BASIC_EXPR_DEFINE_SIMPLE(name, type)\
 	template<typename T>\
 	basic_expr& name(const T& e) {\
-		return static_cast<basic_expr&>(append(type, basic_expr { e }));\
+		_stream << type << e;\
+		return *this;\
 	}\
 	basic_expr& name(const basic_expr& e) {\
-		return static_cast<basic_expr&>(append(type, e));\
+		_stream << type << e.str();\
+		return *this;\
 	}\
 
 
@@ -22,63 +24,81 @@
 #include <string>
 #include <vector>
 #include <ys/string/expr.h>
-#include <ys/string/basic_expr_compiler.h>
 
 namespace ys {
 namespace string {
 
 class basic_expr: public expr {
-	friend class basic_expr_compiler;
 public:
 	using expr::expr;
 
-	YS_STRING_BASIC_EXPR_DEFINE_M(add, "+")
-	YS_STRING_BASIC_EXPR_DEFINE_M(sub, "-")
-	YS_STRING_BASIC_EXPR_DEFINE_M(mul, "*")
-	YS_STRING_BASIC_EXPR_DEFINE_M(div, "/")
-	YS_STRING_BASIC_EXPR_DEFINE_M(lt, "<")
-	YS_STRING_BASIC_EXPR_DEFINE_M(lte, "<=")
-	YS_STRING_BASIC_EXPR_DEFINE_M(gt, ">")
-	YS_STRING_BASIC_EXPR_DEFINE_M(gte, ">=")
+	basic_expr operator()() {
+		return basic_expr{"(" + _stream.str() + ")"};
+	}
 
 	basic_expr& operator+(const basic_expr& e) {
-		return add(e);
+		_stream << "+" << e;
+		return *this;
 	}
 
 	basic_expr& operator-(const basic_expr& e) {
-		return sub(e);
+		_stream << "-" << e;
+		return *this;
 	}
 
 	basic_expr& operator*(const basic_expr& e) {
-		return mul(e);
+		_stream << "*" << e;
+		return *this;
 	}
 
 	basic_expr& operator/(const basic_expr& e) {
-		return div(e);
+		_stream << "/" << e;
+		return *this;
+	}
+
+	basic_expr& operator==(const basic_expr& e) {
+		_stream << "==" << e;
+		return *this;
+	}
+
+	basic_expr& operator!=(const basic_expr& e) {
+		_stream << "!=" << e;
+		return *this;
 	}
 
 	basic_expr& operator<(const basic_expr& e) {
-		return lt(e);
+		_stream << "<" << e;
+		return *this;
 	}
 
 	basic_expr& operator<=(const basic_expr& e) {
-		return lte(e);
+		_stream << "<=" << e;
+		return *this;
 	}
 
 	basic_expr& operator>(const basic_expr& e) {
-		return gt(e);
+		_stream << ">" << e;
+		return *this;
 	}
 
 	basic_expr& operator>=(const basic_expr& e) {
-		return gte(e);
+		_stream << ">=" << e;
+		return *this;
 	}
 
-	std::string str() const override {
-		return (basic_expr_compiler{*this}).compile();
+	basic_expr& operator||(const basic_expr& e) {
+		_stream << "||" << e;
+		return *this;
+	}
+
+	basic_expr& operator&&(const basic_expr& e) {
+		_stream << "&&" << e;
+		return *this;
 	}
 };
 
-} // namespace string
-} // namespace ys
+}
+ // namespace string
+}// namespace ys
 
 #endif /* YS_STRING_BASIC_EXPR_H */
