@@ -18,14 +18,16 @@ int main(int argc, char* argv[]) {
 				"current_timestamp - interval '1' week" }).str() << std::endl;
 
 		// desired usage
-		q.where() & _exists{
-				_select{ "dummy name" } &
-						_from{ "transport.stoptypes1" } &
-						_columns{ "stoptypes1.id" } &
-						_where{
-								(_{ "stoptypes1.stopid" } == _{ "stops.id" }) &&
-										(_{ "stoptypes1.type1id" } == _{ "any($types1Id::int[])" })
-						}
+		q.where() && _where{
+				_exists{
+						_select{ "dummy name" } &
+								_from{ "transport.stoptypes1" } &
+								_columns{ "stoptypes1.id" } &
+								_where{
+										(_{ "stoptypes1.stopid" } == _{ "stops.id" }) &&
+												(_{ "stoptypes1.type1id" } == _{ "any($types1Id::int[])" })
+								}
+				}
 		};
 	}
 
