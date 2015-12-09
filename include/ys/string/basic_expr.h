@@ -8,21 +8,6 @@
 #ifndef YS_STRING_BASIC_EXPR_H
 #define YS_STRING_BASIC_EXPR_H
 
-#define YS_STRING_BASIC_EXPR_DEFINE_SIMPLE(name, type)\
-	template<typename T>\
-	basic_expr& name(const T& e) {\
-		_stream << type << e;\
-		return *this;\
-	}\
-	basic_expr& name(const basic_expr& e) {\
-		_stream << type << e.str();\
-		return *this;\
-	}\
-
-
-#include <iostream>
-#include <string>
-#include <vector>
 #include <ys/string/expr.h>
 
 namespace ys {
@@ -33,66 +18,68 @@ public:
 	using expr::expr;
 
 	basic_expr operator()() {
-		return basic_expr{"(" + _stream.str() + ")"};
+		basic_expr e{};
+		e << "(" << str() << ")";
+		return e;
 	}
 
 	basic_expr& operator+(const basic_expr& e) {
-		_stream << "+" << e;
+		*this << "+" << e;
 		return *this;
 	}
 
 	basic_expr& operator-(const basic_expr& e) {
-		_stream << "-" << e;
+		*this << "-" << e;
 		return *this;
 	}
 
 	basic_expr& operator*(const basic_expr& e) {
-		_stream << "*" << e;
+		*this << "*" << e;
 		return *this;
 	}
 
 	basic_expr& operator/(const basic_expr& e) {
-		_stream << "/" << e;
+		*this << "/" << e;
 		return *this;
 	}
 
 	basic_expr& operator==(const basic_expr& e) {
-		_stream << "==" << e;
+		*this << "==" << e;
 		return *this;
 	}
 
 	basic_expr& operator!=(const basic_expr& e) {
-		_stream << "!=" << e;
+		*this << "!=" << e;
 		return *this;
 	}
 
 	basic_expr& operator<(const basic_expr& e) {
-		_stream << "<" << e;
+		*this << "<" << e;
 		return *this;
 	}
 
 	basic_expr& operator<=(const basic_expr& e) {
-		_stream << "<=" << e;
+		*this << "<=" << e;
 		return *this;
 	}
 
 	basic_expr& operator>(const basic_expr& e) {
-		_stream << ">" << e;
+		*this << ">" << e;
 		return *this;
 	}
 
 	basic_expr& operator>=(const basic_expr& e) {
-		_stream << ">=" << e;
+		*this << ">=" << e;
 		return *this;
 	}
 
 	basic_expr& operator||(const basic_expr& e) {
-		_stream << "||" << e;
+		*this << "||" << e;
 		return *this;
 	}
 
 	basic_expr& operator&&(const basic_expr& e) {
-		_stream << "&&" << e;
+		*this << "&&" << e;
 		return *this;
 	}
 };

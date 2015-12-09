@@ -1,10 +1,3 @@
-/*
- * expr.h
- *
- *  Created on: 8 дек. 2015 г.
- *      Author: stas
- */
-
 #ifndef YS_STRING_EXPR_H
 #define YS_STRING_EXPR_H
 
@@ -30,10 +23,21 @@ public:
 		return _stream.str();
 	}
 
-protected:
-	std::ostringstream _stream;
+	template<typename T>
+	expr& operator <<(const T& v) {
+		_stream << v;
+		return *this;
+	}
+
+	template<typename T, int N>
+	expr& operator <<(const T(&v)[N]) {
+		_stream << v;
+		return *this;
+	}
 
 private:
+	std::ostringstream _stream;
+
 	friend std::ostream& operator <<(std::ostream& os, const expr& expr) {
 		return os << expr.str();
 	}

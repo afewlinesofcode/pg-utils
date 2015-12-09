@@ -8,52 +8,85 @@
 #ifndef YS_PGU_QUERY_COND_EXPR_H
 #define YS_PGU_QUERY_COND_EXPR_H
 
-#include <ys/pgu/query/expr.h>
+#include <ys/string/expr.h>
 
 namespace ys {
 namespace pgu {
 namespace query {
 
-class cond_expr: public expr {
+class cond_expr: public ys::string::expr {
 public:
-	cond_expr(const char* e = "") :
-			expr { e } {
-	}
-	cond_expr(const std::string& e) :
-			expr { e } {
-	}
-	cond_expr(const expr& e) :
-			expr { e } {
-	}
-private:
-	friend cond_expr operator &&(const cond_expr& expr1, const cond_expr& expr2) {
-		return join(expr1, expr2, "and");
+	using expr::expr;
+
+	cond_expr operator()() {
+		cond_expr e{};
+		e << "(" << str() << ")";
+		return e;
 	}
 
-	friend cond_expr operator ||(const cond_expr& expr1, const cond_expr& expr2) {
-		return join(expr1, expr2, "or");
+	cond_expr& operator+(const cond_expr& e) {
+		*this << "+" << e;
+		return *this;
 	}
 
-	friend cond_expr join(const cond_expr& expr1, const cond_expr& expr2, const std::string& glue) {
-		if (expr1.empty() && expr2.empty())
-			return cond_expr { };
-		if (expr1.empty())
-			return expr2;
-		if (expr2.empty())
-			return expr1;
+	cond_expr& operator-(const cond_expr& e) {
+		*this << "-" << e;
+		return *this;
+	}
 
-		return std::string("(").
-				append(expr1.get()).
-				append(") ").
-				append(glue).
-				append(" (").
-				append(expr2.get()).
-				append(")");
+	cond_expr& operator*(const cond_expr& e) {
+		*this << "*" << e;
+		return *this;
+	}
+
+	cond_expr& operator/(const cond_expr& e) {
+		*this << "/" << e;
+		return *this;
+	}
+
+	cond_expr& operator==(const cond_expr& e) {
+		*this << "=" << e;
+		return *this;
+	}
+
+	cond_expr& operator!=(const cond_expr& e) {
+		*this << "<>" << e;
+		return *this;
+	}
+
+	cond_expr& operator<(const cond_expr& e) {
+		*this << "<" << e;
+		return *this;
+	}
+
+	cond_expr& operator<=(const cond_expr& e) {
+		*this << "<=" << e;
+		return *this;
+	}
+
+	cond_expr& operator>(const cond_expr& e) {
+		*this << ">" << e;
+		return *this;
+	}
+
+	cond_expr& operator>=(const cond_expr& e) {
+		*this << ">=" << e;
+		return *this;
+	}
+
+	cond_expr& operator||(const cond_expr& e) {
+		*this << " or " << e;
+		return *this;
+	}
+
+	cond_expr& operator&&(const cond_expr& e) {
+		*this << " and " << e;
+		return *this;
 	}
 };
 
-} /* namespace query */
-} /* namespace pgu */
-} /* namespace ys */
+} // namespace query
+} // namespace pgu
+} // namespace ys
 
 #endif /* YS_PGU_QUERY_COND_EXPR_H */
