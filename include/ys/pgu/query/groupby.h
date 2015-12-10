@@ -8,28 +8,29 @@
 #ifndef YS_PGU_QUERY_GROUPBY_H
 #define YS_PGU_QUERY_GROUPBY_H
 
-#include <ys/pgu/query/expr.h>
+#include <ys/expr.h>
 
 namespace ys {
 namespace pgu {
 namespace query {
 
-class groupby: public expr {
+class groupby: public ys::expr {
 public:
-	groupby(const char* e = "") :
-			expr { e } {
-	}
-	groupby(const std::string& e) :
-			expr { e } {
-	}
-	groupby(const expr& e) :
-			expr { e } {
+	using expr::expr;
+
+	groupby operator&(const groupby& e) {
+		groupby ret{cstr()};
+		ret.intelligent_append(e, ", ");
+		return ret;
+	};
+
+	groupby& operator&=(const groupby& e) {
+		intelligent_append(e, ", ");
+		return *this;
 	}
 
-private:
-	friend std::ostream& operator <<(std::ostream& os, const groupby& o) {
-		if (o.empty()) return os;
-		return os << " group by " << o.to_string() << ' ';
+	std::string str() const override {
+		return empty() ? "" : "group by " + cstr();
 	}
 };
 

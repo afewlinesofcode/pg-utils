@@ -8,28 +8,33 @@
 #ifndef YS_PGU_QUERY_HAVING_H
 #define YS_PGU_QUERY_HAVING_H
 
-#include <ys/pgu/query/cond_expr.h>
+#include <ys/expr.h>
+#include <ys/pgu/query/cond.h>
 
 namespace ys {
 namespace pgu {
 namespace query {
 
-class having: public cond_expr {
+class having: public ys::expr {
 public:
-	having(const char* e = "") :
-			cond_expr { e } {
-	}
-	having(const std::string& e) :
-			cond_expr { e } {
-	}
-	having(const cond_expr& e) :
-			cond_expr { e } {
+	YS_EXPR_CONSTRUCTORS(having);
+
+	having(const cond& c) {
+		append(c.cstr());
 	}
 
-private:
-	friend std::ostream& operator <<(std::ostream& os, const having& o) {
-		if (o.empty()) return os;
-		return os << " having " << o.to_string() << ' ';
+	having& operator&=(const having& e) {
+		intelligent_append(e, " and ");
+		return *this;
+	}
+
+	having& operator|=(const having& e) {
+		intelligent_append(e, " or ");
+		return *this;
+	}
+
+	std::string str() const override {
+		return empty() ? "" : "having " + cstr();
 	}
 };
 

@@ -8,22 +8,22 @@
 #ifndef YS_PGU_QUERY_WHERE_H
 #define YS_PGU_QUERY_WHERE_H
 
-#include <ys/pgu/query/cond_expr.h>
+#include <ys/pgu/query/cond.h>
 
 namespace ys {
 namespace pgu {
 namespace query {
 
-class where: public cond_expr {
+class where: public cond {
 public:
 	where(const std::string& e = "") :
-			cond_expr { e } {
+			cond { e } {
 	}
 	where(const char* e) :
-			cond_expr { e } {
+			cond { e } {
 	}
-	where(const cond_expr& e) :
-			cond_expr { e } {
+	where(const cond& e) :
+			cond { e } {
 	}
 
 private:

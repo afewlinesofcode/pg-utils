@@ -12,14 +12,14 @@
 #include <string>
 #include <sstream>
 
-#include <ys/pgu/query/columns.h>
-#include <ys/pgu/query/groupby.h>
-#include <ys/pgu/query/having.h>
-#include <ys/pgu/query/limit.h>
-#include <ys/pgu/query/offset.h>
-#include <ys/pgu/query/orderby.h>
-#include <ys/pgu/query/relations.h>
-#include <ys/pgu/query/where.h>
+//#include <ys/pgu/query/columns.h>
+//#include <ys/pgu/query/groupby.h>
+//#include <ys/pgu/query/having.h>
+//#include <ys/pgu/query/limit.h>
+//#include <ys/pgu/query/offset.h>
+//#include <ys/pgu/query/orderby.h>
+//#include <ys/pgu/query/relations.h>
+//#include <ys/pgu/query/where.h>
 
 #include <ys/traits.h>
 #include <ys/pgu/query/types.h>
@@ -35,10 +35,10 @@ public:
 	const int type = Type;
 
 	builder(const std::string& relation) {
-		this->relation(relation);
+//		this->relation(relation);
 	}
 
-	query::relations& relation() {
+	/*query::relations& relation() {
 		return _relation;
 	}
 
@@ -132,7 +132,7 @@ public:
 				_where << _groupby << _having << _orderby << _limit << _offset;
 
 		return s.str();
-	}
+	}*/
 
 private:
 	/*
@@ -140,14 +140,14 @@ private:
 	 * the following ones will exist in every specialization.
 	 */
 
-	relations _relation;
+	/*relations _relation;
 	query::columns _columns;
 	query::where _where;
 	query::groupby _groupby;
 	query::having _having;
 	query::orderby _orderby;
 	query::limit _limit;
-	query::offset _offset;
+	query::offset _offset;*/
 };
 
 } /* namespace query */
