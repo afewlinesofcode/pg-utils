@@ -16,16 +16,16 @@ namespace query {
 
 class groupby: public ys::expr {
 public:
-	using expr::expr;
+	YS_EXPR_CONSTRUCTORS(groupby);
 
 	groupby operator&(const groupby& e) {
 		groupby ret{cstr()};
-		ret.intelligent_append(e, ", ");
+		ret.append_expr(e, ", ");
 		return ret;
 	};
 
 	groupby& operator&=(const groupby& e) {
-		intelligent_append(e, ", ");
+		append_expr(e, ", ");
 		return *this;
 	}
 

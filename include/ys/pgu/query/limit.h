@@ -8,37 +8,29 @@
 #ifndef YS_PGU_QUERY_LIMIT_H
 #define YS_PGU_QUERY_LIMIT_H
 
-#include <ostream>
-#include <string>
+#include <ys/expr.h>
 
 namespace ys {
 namespace pgu {
 namespace query {
 
-class limit {
+class limit: public ys::expr {
 public:
-	limit(unsigned count = 0) :
-			_value(count) {
+	YS_EXPR_CONSTRUCTORS(limit);
+
+	columns operator&(const columns& e) {
+		columns ret{cstr()};
+		ret.append_expr(e, ", ");
+		return ret;
+	};
+
+	columns& operator&=(const columns& e) {
+		append_expr(e, ", ");
+		return *this;
 	}
 
-	bool empty() const {
-		return _value == 0;
-	}
-
-	operator std::string() const {
-		return to_string();
-	}
-
-	std::string to_string() const {
-		return std::to_string(_value);
-	}
-
-private:
-	unsigned _value;
-
-	friend std::ostream& operator <<(std::ostream& os, const limit& o) {
-		if (o.empty()) return os;
-		return os << " limit " << o.to_string() << ' ';
+	std::string str() const override {
+		return empty() ? "*" : cstr();
 	}
 };
 

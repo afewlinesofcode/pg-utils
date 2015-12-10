@@ -13,7 +13,7 @@
 #define YS_PGU_QUERY_COND_OP(op, sym)\
 	cond op(const cond& e) {\
 		cond c{cstr()};\
-		c.intelligent_append(e, sym);\
+		c.append_expr(e, sym);\
 		return c;\
 	}
 
@@ -43,12 +43,12 @@ public:
 	YS_PGU_QUERY_COND_OP(operator||, " or ")
 
 	cond& operator&=(const cond& e) {
-		intelligent_append(e, " and ");
+		append_expr(e, " and ");
 		return *this;
 	}
 
 	cond& operator|=(const cond& e) {
-		intelligent_append(e, " or ");
+		append_expr(e, " or ");
 		return *this;
 	}
 };

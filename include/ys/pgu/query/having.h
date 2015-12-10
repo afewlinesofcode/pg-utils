@@ -20,16 +20,16 @@ public:
 	YS_EXPR_CONSTRUCTORS(having);
 
 	having(const cond& c) {
-		append(c.cstr());
+		append_str(c.cstr());
 	}
 
 	having& operator&=(const having& e) {
-		intelligent_append(e, " and ");
+		append_expr(e, " and ");
 		return *this;
 	}
 
 	having& operator|=(const having& e) {
-		intelligent_append(e, " or ");
+		append_expr(e, " or ");
 		return *this;
 	}
 

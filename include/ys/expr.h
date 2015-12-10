@@ -22,13 +22,13 @@ public:
 	expr(const expr&) = default;
 	expr(expr&&) = default;
 	explicit expr(const std::string& str) :
-			_str{ str } {
+			_str { str } {
 	}
 	explicit expr(std::string&& str) :
-			_str{ std::move(str) } {
+			_str { std::move(str) } {
 	}
 	explicit expr(const char* v) :
-			_str{ v } {
+			_str { v } {
 	}
 	template<typename T>
 	explicit expr(T v) {
@@ -41,7 +41,7 @@ public:
 	expr& operator=(expr&&) = default;
 
 	expr& operator&=(const expr& e) {
-		return append(e.cstr());
+		return append_str(e.cstr());
 	}
 
 	bool empty() const {
@@ -57,31 +57,28 @@ public:
 	}
 
 protected:
-	expr& append(const std::string& s) {
+	expr& append_str(const std::string& s) {
 		_str.append(s);
 		return *this;
 	}
 
 	template<typename Arg, typename ...Args>
-	expr& append(Arg arg, Args ... args) {
+	expr& append_str(Arg arg, Args ... args) {
 		_str.append(arg);
-		append(args...);
+		append_str(args...);
 		return *this;
 	}
 
-	expr& intelligent_append(const expr& e, const std::string& glue) {
+	expr& append_expr(const expr& e, const std::string& sep) {
 		if (e.empty())
-			goto intelligent_append_exit;
+			goto _append_exit;
 		if (empty())
-			goto intelligent_append_str;
+			goto _append_str;
 
-		append(glue);
+		append_str(sep);
 
-		intelligent_append_str:
-		append(e.cstr());
-
-		intelligent_append_exit:
-		return *this;
+		_append_str: append_str(e.cstr());
+		_append_exit: return *this;
 	}
 
 private:

@@ -16,16 +16,14 @@ namespace query {
 
 class columns: public ys::expr {
 public:
-	using expr::expr;
+	YS_EXPR_CONSTRUCTORS(columns);
 
 	columns operator&(const columns& e) {
-		columns ret{cstr()};
-		ret.intelligent_append(e, ", ");
-		return ret;
+		return columns{cstr()} &= e;
 	};
 
 	columns& operator&=(const columns& e) {
-		intelligent_append(e, ", ");
+		append_expr(e, ", ");
 		return *this;
 	}
 
