@@ -8,49 +8,15 @@
 #ifndef YS_PGU_QUERY_COND_EXPR_H
 #define YS_PGU_QUERY_COND_EXPR_H
 
-#include <ys/expr.h>
-
-#define YS_PGU_QUERY_COND_OP(op, sym)\
-	cond op(const cond& e) {\
-		cond c{cstr()};\
-		c.append_expr(e, sym);\
-		return c;\
-	}
+#include <ys/pgu/query/basic_cond.h>
 
 namespace ys {
 namespace pgu {
 namespace query {
 
-class cond: public ys::expr {
+class cond: public basic_cond<cond> {
 public:
-	using expr::expr;
-
-	cond operator()() {
-		return cond{"(" + cstr() + ")"};
-	}
-
-	YS_PGU_QUERY_COND_OP(operator+, " + ")
-	YS_PGU_QUERY_COND_OP(operator-, " - ")
-	YS_PGU_QUERY_COND_OP(operator*, " * ")
-	YS_PGU_QUERY_COND_OP(operator/, " / ")
-	YS_PGU_QUERY_COND_OP(operator==, " = ")
-	YS_PGU_QUERY_COND_OP(operator!=, " <> ")
-	YS_PGU_QUERY_COND_OP(operator<, " < ")
-	YS_PGU_QUERY_COND_OP(operator<=, " <= ")
-	YS_PGU_QUERY_COND_OP(operator>, " > ")
-	YS_PGU_QUERY_COND_OP(operator>=, " >= ")
-	YS_PGU_QUERY_COND_OP(operator&&, " and ")
-	YS_PGU_QUERY_COND_OP(operator||, " or ")
-
-	cond& operator&=(const cond& e) {
-		append_expr(e, " and ");
-		return *this;
-	}
-
-	cond& operator|=(const cond& e) {
-		append_expr(e, " or ");
-		return *this;
-	}
+	using basic_cond::basic_cond;
 };
 
 } // namespace query

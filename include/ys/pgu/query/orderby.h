@@ -1,5 +1,5 @@
 /*
- * query_orderby.h
+ * orderby.h
  *
  *  Created on: 3 дек. 2015 г.
  *      Author: stas
@@ -8,28 +8,18 @@
 #ifndef YS_PGU_QUERY_ORDERBY_H
 #define YS_PGU_QUERY_ORDERBY_H
 
-#include <ys/pgu/query/expr.h>
+#include <ys/basic_expr.h>
 
 namespace ys {
 namespace pgu {
 namespace query {
 
-class orderby: public expr {
+class orderby: public ys::basic_expr<orderby> {
 public:
-	orderby(const char* e = "") :
-			expr { e } {
-	}
-	orderby(const std::string& e) :
-			expr { e } {
-	}
-	orderby(const expr& e) :
-			expr { e } {
-	}
+	using basic_expr::basic_expr;
 
-private:
-	friend std::ostream& operator <<(std::ostream& os, const orderby& o) {
-		if (o.empty()) return os;
-		return os << " order by " << o.to_string() << ' ';
+	std::string str() const {
+		return empty() ? "" : "order by " + cstr();
 	}
 };
 

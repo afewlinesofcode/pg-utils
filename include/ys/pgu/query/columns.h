@@ -8,26 +8,17 @@
 #ifndef YS_PGU_QUERY_COLUMNS_H
 #define YS_PGU_QUERY_COLUMNS_H
 
-#include <ys/expr.h>
+#include <ys/basic_expr.h>
 
 namespace ys {
 namespace pgu {
 namespace query {
 
-class columns: public ys::expr {
+class columns: public ys::basic_expr<columns> {
 public:
-	YS_EXPR_CONSTRUCTORS(columns);
+	using basic_expr::basic_expr;
 
-	columns operator&(const columns& e) {
-		return columns{cstr()} &= e;
-	};
-
-	columns& operator&=(const columns& e) {
-		append_expr(e, ", ");
-		return *this;
-	}
-
-	std::string str() const override {
+	std::string str() const {
 		return empty() ? "*" : cstr();
 	}
 };

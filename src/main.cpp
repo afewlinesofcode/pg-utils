@@ -10,21 +10,25 @@
 #include <sstream>
 #include <string>
 
+class rows: public ys::basic_expr<rows> {
+public:
+	using basic_expr::basic_expr;
+};
 
 int main(int argc, char* argv[]) {
 	{
-//		using _ = ys::pgu::query::cond;
 		using namespace std;
 		using namespace ys::pgu::query::alias;
 
 		{
-			cout << "conditions: " << (((_{23} + _{15})() / _{73})() || (_{"qwe"} == _{"$val"})()) << endl;
+			_ c = (((_{23} + _{15})() / _{73})() || (_{"qwe"} == _{"$val"})());
+			std::cout << "conditions: " << c << std::endl;
 		}
 
 		{
 			_c c = _c{"code"} & _c{"cardid"};
 			c &= _c{"createddatetime"};
-			cout << "columns: " << c << endl;
+			cout << "columns: " << _c{} << ", " << c << endl;
 		}
 
 		{
@@ -41,8 +45,34 @@ int main(int argc, char* argv[]) {
 			cout << "having: " << h << endl;
 		}
 
-//		std::cout << (_{ "trackerid" } == _{ 13729 } && _{ "drift" } == _{ 0 } && _{ "datetime" } <
-//				_{"current_timestamp"} - _{"interval '1' week" }).str() << std::endl;
+		{
+			_w w1;
+			_w w = _{"count(id)"} > _{1};
+			w |= _{} && _{"is_bool(table.col2)"};
+			w &= (_{"table.col1"} == _{"$arg1"} || _{"table.col2"})();
+			cout << "where: " << w << endl;
+		}
+
+		{
+			_ofs o;
+
+			o = _{"is_val"};
+			cout << o << endl;
+		}
+
+		{
+			auto e = (_{ "trackerid" } == _{ 13729 } && _{ "drift" } == _{ 0 } && _{ "datetime" } <
+				_{"current_timestamp"} - _{"interval '1' weeks" });
+			std::cout << e << endl;
+		}
+
+		{
+			auto q = _select{} & _w{_{"createddatetime"} > _{"current_timestamp"}};
+
+			q.where() = q.where()() || _{"cardtype"} == _{"'emergency'"};
+
+			cout << q << endl;
+		}
 
 		// desired usage example
 //		q.where() && _w{

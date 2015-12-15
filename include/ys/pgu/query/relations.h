@@ -8,29 +8,15 @@
 #ifndef YS_PGU_QUERY_RELATIONS_H
 #define YS_PGU_QUERY_RELATIONS_H
 
-#include <ys/pgu/query/expr.h>
+#include <ys/basic_expr.h>
 
 namespace ys {
 namespace pgu {
 namespace query {
 
-class relations: public expr {
+class relations: public basic_expr<relations> {
 public:
-	relations(const std::string& e = "") :
-			expr { e } {
-	}
-	relations(const char* e) :
-			expr { e } {
-	}
-	relations(const expr& e) :
-			expr { e } {
-	}
-
-private:
-	friend std::ostream& operator <<(std::ostream& os, const relations& o) {
-		if (!o.empty()) os << ' ' << o.to_string() << ' ';
-		return os;
-	}
+	using basic_expr::basic_expr;
 };
 
 } /* namespace query */

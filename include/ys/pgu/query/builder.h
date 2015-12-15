@@ -23,7 +23,6 @@
 
 #include <ys/traits.h>
 #include <ys/pgu/query/types.h>
-#include <ys/pgu/query/compile.h>
 
 namespace ys {
 namespace pgu {

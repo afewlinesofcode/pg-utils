@@ -1,5 +1,5 @@
 /*
- * query_where.h
+ * where.h
  *
  *  Created on: 3 дек. 2015 г.
  *      Author: stas
@@ -8,28 +8,18 @@
 #ifndef YS_PGU_QUERY_WHERE_H
 #define YS_PGU_QUERY_WHERE_H
 
-#include <ys/pgu/query/cond.h>
+#include <ys/pgu/query/basic_cond.h>
 
 namespace ys {
 namespace pgu {
 namespace query {
 
-class where: public cond {
+class where: public basic_cond<where> {
 public:
-	where(const std::string& e = "") :
-			cond { e } {
-	}
-	where(const char* e) :
-			cond { e } {
-	}
-	where(const cond& e) :
-			cond { e } {
-	}
+	using basic_cond::basic_cond;
 
-private:
-	friend std::ostream& operator <<(std::ostream& os, const where& o) {
-		if (o.empty()) return os;
-		return os << " where " << o.to_string() << ' ';
+	std::string str() const {
+		return empty() ? "" : "where " + cstr();
 	}
 };
 

@@ -1,5 +1,5 @@
 /*
- * query_having.h
+ * having.h
  *
  *  Created on: 3 дек. 2015 г.
  *      Author: stas
@@ -8,32 +8,17 @@
 #ifndef YS_PGU_QUERY_HAVING_H
 #define YS_PGU_QUERY_HAVING_H
 
-#include <ys/expr.h>
-#include <ys/pgu/query/cond.h>
+#include <ys/pgu/query/basic_cond.h>
 
 namespace ys {
 namespace pgu {
 namespace query {
 
-class having: public ys::expr {
+class having: public basic_cond<having> {
 public:
-	YS_EXPR_CONSTRUCTORS(having);
+	using basic_cond::basic_cond;
 
-	having(const cond& c) {
-		append_str(c.cstr());
-	}
-
-	having& operator&=(const having& e) {
-		append_expr(e, " and ");
-		return *this;
-	}
-
-	having& operator|=(const having& e) {
-		append_expr(e, " or ");
-		return *this;
-	}
-
-	std::string str() const override {
+	std::string str() const {
 		return empty() ? "" : "having " + cstr();
 	}
 };
