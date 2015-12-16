@@ -13,7 +13,7 @@
 namespace ys {
 
 template<typename T>
-using integral_t = typename std::enable_if<std::is_integral<T>::value>::type;
+using arithmetic_t = typename std::enable_if<std::is_arithmetic<T>::value>::type;
 
 template<typename E>
 class basic_expr {
@@ -21,7 +21,7 @@ class basic_expr {
 	friend class basic_expr;
 public:
 	using expr_type = E;
-	using expr_basic_type = basic_expr<E>;
+	using basic_expr_type = basic_expr<E>;
 
 	basic_expr() = default;
 	basic_expr(const basic_expr&) = default;
@@ -44,7 +44,7 @@ public:
 	explicit basic_expr(const char* v) :
 		_str { v } {
 	}
-	template<typename U, typename = typename std::enable_if<std::is_integral<U>::value>::type>
+	template<typename U, typename = arithmetic_t<U>>
 	explicit basic_expr(U v) {
 		_str = std::to_string(v);
 	}
@@ -75,7 +75,7 @@ public:
 		_str = s;
 		return *this;
 	}
-	template<typename U, typename = typename std::enable_if<std::is_integral<U>::value>::type>
+	template<typename U, typename = arithmetic_t<U>>
 	basic_expr& operator=(U v) {
 		using namespace std;
 		_str = to_string(v);
@@ -107,7 +107,7 @@ public:
 		append_sep(s);
 		return *this;
 	}
-	template<typename U, typename = typename std::enable_if<std::is_integral<U>::value>::type>
+	template<typename U, typename = arithmetic_t<U>>
 	expr_type operator&(U v) {
 		append_sep(expr_type{v});
 		return *this;
@@ -122,19 +122,18 @@ public:
 	}
 
 protected:
-	template<typename U, typename = typename std::enable_if<std::is_integral<U>::value>::type>
-	void append(U v) {
-		using namespace std;
-		_str.append(to_string(v));
-	}
 	void append(const std::string& s) {
 		_str.append(s);
 	}
 	void append(std::string&& s) {
-		_str.append(s);
+		append(s);
 	}
 	void append(const char* s) {
-		_str.append(s);
+		append(std::string{s});
+	}
+	template<typename U, typename = arithmetic_t<U>>
+	void append(U v) {
+		append(to_string(v));
 	}
 	template<typename Arg, typename ...Args>
 	void append(const Arg& arg, const Args& ...args) {
@@ -159,7 +158,7 @@ protected:
 	void append_sep(const char* s) {
 		append_sep(std::string{s});
 	}
-	template<typename U, typename = typename std::enable_if<std::is_integral<U>::value>::type>
+	template<typename U, typename = arithmetic_t<U>>
 	void append_sep(U v) {
 		using namespace std;
 		append_sep(to_string(v));
@@ -185,7 +184,7 @@ protected:
 	void append_sep(const char* s, const std::string& sep) {
 		append_sep(std::string{s}, sep);
 	}
-	template<typename U, typename = typename std::enable_if<std::is_integral<U>::value>::type>
+	template<typename U, typename = arithmetic_t<U>>
 	void append_sep(U v, const std::string& sep) {
 		using namespace std;
 		append_sep(to_string(v), sep);

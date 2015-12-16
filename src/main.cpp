@@ -15,6 +15,8 @@ int main(int argc, char* argv[]) {
 		using namespace std;
 		using namespace ys::pgu::query;
 
+		cout << (_{12} + _{"qwe"} + 17) << endl;
+
 		auto q = select_from("test") &
 			relations{"test1"} &
 			columns{"id, cardid"} &
