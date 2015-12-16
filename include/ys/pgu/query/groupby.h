@@ -17,6 +17,7 @@ namespace query {
 class groupby: public ys::basic_expr<groupby> {
 public:
 	using basic_expr::basic_expr;
+	using basic_expr::operator=;
 
 	std::string str() const {
 		return empty() ? "" : "group by " + cstr();

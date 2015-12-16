@@ -8,13 +8,22 @@
 #ifndef YS_PGU_QUERY_H
 #define YS_PGU_QUERY_H
 
-#include <type_traits>
-#include <ys/pgu/query/types.h>
 #include <ys/pgu/query/builder.h>
+#include <ys/pgu/query/cond.h>
 
 namespace ys {
 namespace pgu {
 namespace query {
+
+using _ = cond;
+
+cond operator"" _c(const char* s) {
+	return cond { s };
+}
+
+cond operator"" _c(const char* s, size_t size) {
+	return cond { s };
+}
 
 /*!
  * Create a SELECT query builder.
@@ -22,8 +31,7 @@ namespace query {
  * @return
  */
 builder<select> select_from(const std::string& relation) {
-	auto obj = builder<select>(relation);
-	return obj;
+	return builder<select> { } & relations { relation };
 }
 
 /*!

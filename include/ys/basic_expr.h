@@ -12,24 +12,29 @@
 
 namespace ys {
 
+template<typename T>
+using integral_t = typename std::enable_if<std::is_integral<T>::value>::type;
+
 template<typename E>
 class basic_expr {
 	template<typename U>
 	friend class basic_expr;
 public:
 	using expr_type = E;
+	using expr_basic_type = basic_expr<E>;
 
 	basic_expr() = default;
 	basic_expr(const basic_expr&) = default;
 	basic_expr(basic_expr&&) = default;
-	template<typename T>
-	basic_expr(const basic_expr<T>& e) :
+	template<typename U>
+	basic_expr(const basic_expr<U>& e) :
 		_str { e._str } {
 	}
-	template<typename T>
-	basic_expr(basic_expr<T>&& e) :
+	template<typename U>
+	basic_expr(basic_expr<U>&& e) :
 		_str { std::move(e._str) } {
 	}
+
 	explicit basic_expr(const std::string& str) :
 		_str { str } {
 	}
@@ -39,22 +44,41 @@ public:
 	explicit basic_expr(const char* v) :
 		_str { v } {
 	}
-	template<typename T>
-	explicit basic_expr(T v,
-		typename std::enable_if<std::is_integral<T>::value, T>::type* = 0) {
+	template<typename U, typename = typename std::enable_if<std::is_integral<U>::value>::type>
+	explicit basic_expr(U v) {
 		_str = std::to_string(v);
 	}
+
 	basic_expr& operator=(const basic_expr&) = default;
 	basic_expr& operator=(basic_expr&&) = default;
-	template<typename T>
-	basic_expr& operator=(const basic_expr<T>& e) {
+	template<typename U>
+	basic_expr& operator=(const basic_expr<U>& e) {
 		_str = e._str;
 		return *this;
 	}
-	template<typename T>
-	basic_expr& operator=(basic_expr<T>&& e) {
+	template<typename U>
+	basic_expr& operator=(basic_expr<U>&& e) {
 		using namespace std;
 		swap(_str, e._str);
+		return *this;
+	}
+	basic_expr& operator=(const std::string& s) {
+		_str = s;
+		return *this;
+	}
+	basic_expr& operator=(std::string&& s) {
+		using namespace std;
+		swap(_str, s);
+		return *this;
+	}
+	basic_expr& operator=(const char* s) {
+		_str = s;
+		return *this;
+	}
+	template<typename U, typename = typename std::enable_if<std::is_integral<U>::value>::type>
+	basic_expr& operator=(U v) {
+		using namespace std;
+		_str = to_string(v);
 		return *this;
 	}
 
@@ -66,16 +90,28 @@ public:
 		return ", ";
 	}
 
-	template<typename T>
-	expr_type operator&(const basic_expr<T>& e) {
-		return expr_type{cstr()} &= e;
+	template<typename U>
+	expr_type operator&(const basic_expr<U>& e) {
+		append_sep(e);
+		return *this;
 	};
-
-	template<typename T>
-	basic_expr& operator&=(const basic_expr<T>& e) {
-		append(e);
+	expr_type operator&(const std::string& s) {
+		append_sep(s);
 		return *this;
 	}
+	expr_type operator&(std::string&& s) {
+		append_sep(s);
+		return *this;
+	}
+	expr_type operator&(const char* s) {
+		append_sep(s);
+		return *this;
+	}
+	template<typename U, typename = typename std::enable_if<std::is_integral<U>::value>::type>
+	expr_type operator&(U v) {
+		append_sep(expr_type{v});
+		return *this;
+	};
 
 	std::string str() const {
 		return _str;
@@ -86,34 +122,77 @@ public:
 	}
 
 protected:
-	basic_expr& append(const std::string& s) {
-		_str.append(s);
-		return *this;
+	template<typename U, typename = typename std::enable_if<std::is_integral<U>::value>::type>
+	void append(U v) {
+		using namespace std;
+		_str.append(to_string(v));
 	}
-
-	template<typename ...Args>
-	basic_expr& append(const std::string& arg, Args ...args) {
+	void append(const std::string& s) {
+		_str.append(s);
+	}
+	void append(std::string&& s) {
+		_str.append(s);
+	}
+	void append(const char* s) {
+		_str.append(s);
+	}
+	template<typename Arg, typename ...Args>
+	void append(const Arg& arg, const Args& ...args) {
 		append(arg);
 		append(args...);
-		return *this;
 	}
-
-	template<typename T>
-	basic_expr& append(const basic_expr<T>& e) {
-		return append(e, static_cast<expr_type>(*this).sep());
+	template<typename Arg, typename ...Args>
+	void append(Arg&& arg, Args&& ...args) {
+		append(std::forward<Arg>(arg));
+		append(std::forward<Args>(args)...);
 	}
-
-	template<typename T>
-	basic_expr& append(const basic_expr<T>& e, const std::string& sep) {
-		if (e.empty())
+	template<typename U>
+	void append_sep(const basic_expr<U>& e) {
+		append_sep(e._str);
+	}
+	void append_sep(const std::string& s) {
+		append_sep(s, static_cast<expr_type>(*this).sep());
+	}
+	void append_sep(std::string&& s) {
+		append_sep(s);
+	}
+	void append_sep(const char* s) {
+		append_sep(std::string{s});
+	}
+	template<typename U, typename = typename std::enable_if<std::is_integral<U>::value>::type>
+	void append_sep(U v) {
+		using namespace std;
+		append_sep(to_string(v));
+	}
+	template<typename U>
+	void append_sep(const basic_expr<U>& e, const std::string& sep) {
+		append_sep(e._str, sep);
+	}
+	void append_sep(const std::string& s, const std::string& sep) {
+		if (s.empty())
 			goto l_append_exit;
 		if (empty())
 			goto l_append_str;
 
 		append(sep);
 
-		l_append_str: append(e._str);
-		l_append_exit: return *this;
+		l_append_str: append(s);
+		l_append_exit:;
+	}
+	void append_sep(std::string&& s, const std::string& sep) {
+		append_sep(s, sep);
+	}
+	void append_sep(const char* s, const std::string& sep) {
+		append_sep(std::string{s}, sep);
+	}
+	template<typename U, typename = typename std::enable_if<std::is_integral<U>::value>::type>
+	void append_sep(U v, const std::string& sep) {
+		using namespace std;
+		append_sep(to_string(v), sep);
+	}
+
+	void replace(const std::string& str) {
+		_str = str;
 	}
 private:
 	std::string _str;

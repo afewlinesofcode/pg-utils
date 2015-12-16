@@ -17,6 +17,10 @@ namespace query {
 class cond: public basic_cond<cond> {
 public:
 	using basic_cond::basic_cond;
+	using basic_cond::operator=;
+
+
+//	cond operator,()
 };
 
 } // namespace query

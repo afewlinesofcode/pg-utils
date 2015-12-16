@@ -5,77 +5,29 @@
  *      Author: stas
  */
 
-#include <ys/pgu/query/alias.h>
+#include <ys/pgu/query/query.h>
 #include <iostream>
 #include <sstream>
 #include <string>
 
-class rows: public ys::basic_expr<rows> {
-public:
-	using basic_expr::basic_expr;
-};
-
 int main(int argc, char* argv[]) {
 	{
 		using namespace std;
-		using namespace ys::pgu::query::alias;
+		using namespace ys::pgu::query;
 
-		{
-			_ c = (((_{23} + _{15})() / _{73})() || (_{"qwe"} == _{"$val"})());
-			std::cout << "conditions: " << c << std::endl;
-		}
+		auto q = select_from("test") &
+			relations{"test1"} &
+			columns{"id, cardid"} &
+			where{"cardtype"_c == "'emergency'" || "cardtype"_c > 0} &
+			groupby{"id, name"} &
+			having("count(id)"_c > 1) &
+			orderby{""};
 
-		{
-			_c c = _c{"code"} & _c{"cardid"};
-			c &= _c{"createddatetime"};
-			cout << "columns: " << _c{} << ", " << c << endl;
-		}
+//		auto ins = insert_into("test") & columns{"id, cardid"} & values{"$arg1, $arg2"};
 
-		{
-			_g g = _g{"id, name"} & _g{"datetime"};
-			g &= _g{"owner"};
-			cout << "groupby: " << g << endl;
-		}
-
-		{
-			_h h1;
-			_h h = _{"count(id)"} > _{1};
-			h |= _{} && _{"is_bool(table.col2)"};
-			h &= (_{"table.col1"} == _{"$arg1"} || _{"table.col2"})();
-			cout << "having: " << h << endl;
-		}
-
-		{
-			_w w1;
-			_w w = _{"count(id)"} > _{1};
-			w |= _{} && _{"is_bool(table.col2)"};
-			w &= (_{"table.col1"} == _{"$arg1"} || _{"table.col2"})();
-			cout << "where: " << w << endl;
-		}
-
-		{
-			_ofs o;
-
-			o = _{"is_val"};
-			cout << o << endl;
-		}
-
-		{
-			auto e = (_{ "trackerid" } == _{ 13729 } && _{ "drift" } == _{ 0 } && _{ "datetime" } <
-				_{"current_timestamp"} - _{"interval '1' weeks" });
-			std::cout << e << endl;
-		}
-
-		{
-			auto q = _select{} & _w{_{"createddatetime"} > _{"current_timestamp"}};
-
-			q.where() = q.where()() || _{"cardtype"} == _{"'emergency'"};
-
-			cout << q << endl;
-		}
-
-		// desired usage example
-//		q.where() && _w{
+		cout << q.str() << endl;
+//		// desired usage example
+//		q.where() && _w{5
 //				_exists{
 //						_select{ "dummy name" } <<
 //								_rel{ "transport.stoptypes1" } <<
