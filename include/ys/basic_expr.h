@@ -99,10 +99,6 @@ public:
 		append_sep(s);
 		return *this;
 	}
-	expr_type operator&(std::string&& s) {
-		append_sep(s);
-		return *this;
-	}
 	expr_type operator&(const char* s) {
 		append_sep(s);
 		return *this;
@@ -125,9 +121,6 @@ protected:
 	void append(const std::string& s) {
 		_str.append(s);
 	}
-	void append(std::string&& s) {
-		append(s);
-	}
 	void append(const char* s) {
 		append(std::string{s});
 	}
@@ -140,20 +133,12 @@ protected:
 		append(arg);
 		append(args...);
 	}
-	template<typename Arg, typename ...Args>
-	void append(Arg&& arg, Args&& ...args) {
-		append(std::forward<Arg>(arg));
-		append(std::forward<Args>(args)...);
-	}
 	template<typename U>
 	void append_sep(const basic_expr<U>& e) {
 		append_sep(e._str);
 	}
 	void append_sep(const std::string& s) {
 		append_sep(s, static_cast<expr_type>(*this).sep());
-	}
-	void append_sep(std::string&& s) {
-		append_sep(s);
 	}
 	void append_sep(const char* s) {
 		append_sep(std::string{s});
@@ -177,9 +162,6 @@ protected:
 
 		l_append_str: append(s);
 		l_append_exit:;
-	}
-	void append_sep(std::string&& s, const std::string& sep) {
-		append_sep(s, sep);
 	}
 	void append_sep(const char* s, const std::string& sep) {
 		append_sep(std::string{s}, sep);
