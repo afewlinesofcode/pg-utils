@@ -5,12 +5,26 @@
  *      Author: stas
  */
 
-#include <ys/pgu/query/query.h>
+#include <ys/pgu/query.h>
+#include <ys/pgu/model.h>
 #include <iostream>
 #include <sstream>
 #include <string>
 
 int main(int argc, char* argv[]) {
+	{
+		using namespace ys::pgu;
+
+		class my_model: public model<my_model> {
+			int id;
+			std::string name;
+		};
+
+//		model<record> m;
+//		auto& d = m.data();
+//		d.name = "qwe";
+//		m.modified();
+	}
 	{
 		using namespace std;
 		using namespace ys::pgu::query;
