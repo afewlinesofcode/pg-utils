@@ -15,15 +15,9 @@ int main(int argc, char* argv[]) {
 	{
 		using namespace ys::pgu;
 
-		class my_model: public model<my_model> {
-			int id;
-			std::string name;
-		};
-
-//		model<record> m;
-//		auto& d = m.data();
-//		d.name = "qwe";
-//		m.modified();
+		model<record> m;
+		m.data.name = "qwe";
+		m.modified();
 	}
 	{
 		using namespace std;

@@ -10,6 +10,7 @@
 
 #include <tuple>
 #include <iostream>
+#include <vector>
 
 namespace ys {
 namespace pgu {
@@ -21,93 +22,118 @@ struct record {
 	struct attrs {
 		static constexpr auto all() {
 			return std::make_tuple(
-				std::make_pair("id", &record::id),
-				std::make_pair("name", &record::name)
-			);
+					std::make_pair("id", &record::id),
+					std::make_pair("name", &record::name)
+							);
 		}
-
 		static constexpr auto mod() {
 			return std::make_tuple(
-				std::make_pair("name", &record::name)
-			);
-		}
-
-		static constexpr auto sel() {
-			return std::make_tuple(
-				std::make_pair("id", &record::id),
-				std::make_pair("name", &record::name)
-			);
+					std::make_pair("name", &record::name)
+							);
 		}
 	};
 };
 
-template<typename Mod>
+template<typename M, typename A>
+class attr_modified;
+
+template<typename Record>
 class model {
-private:
-	template<typename T>
-	struct attr_modified;
+	template<typename M, typename A>
+	friend class model_accessor;
 
 public:
-	using model_type = Mod;
+	using record_type = Record;
+
+	record_type data;
 
 	model() {
 	}
-
-	model(const model_type& t) :
-		original { t } {
+	model(const record_type& t) :
+			data { t }, original { t } {
 	}
-
 	void modified() {
-//		iterate_model_attrs<attr_modified>(record_type::attrs::mod());
+		std::vector<std::string> vec;
+		for_each_attr<attr_modified>(record_type::attrs::mod(), vec);
+
+		std::cout << "modified " << vec.size() << " items" << std::endl;
+		for (std::string& s : vec) {
+			std::cout << "\t" << s << std::endl;
+		}
 	}
 
 	template<
-		template<typename> class Method,
-		typename Tuple,
-		int N = 0
+			template<typename, typename > class Fun,
+			typename Tuple,
+			typename Arg,
+			int N = 0
 	>
-	void iterate_model_attrs(const Tuple& tup,
-		typename std::enable_if<
-			N < std::tuple_size<Tuple>::value
-		>::type * = 0) {
-
-		using element_type = typename std::tuple_element<N, Tuple>::type;
-		element_type el = std::get<N>(tup);
-
-		Method<element_type> s(*this);
-		s(el);
-
-		iterate_model_attrs<Method, Tuple, N + 1>(tup);
+	void for_each_attr(
+			const Tuple& tup,
+			Arg& arg,
+			typename std::enable_if<
+					N < std::tuple_size<Tuple>::value
+			>::type * = 0) {
+		Fun<typename std::tuple_element<N, Tuple>::type,
+				typename std::remove_reference<decltype(*this)>::type>
+		(std::get<N>(tup), *this)(arg);
+		for_each_attr<Fun, Tuple, Arg, N + 1>(tup, arg);
 	}
 	template<
-		template<typename> class Method,
-		typename Tuple,
-		int N
+			template<typename, typename > class Fun,
+			typename Tuple,
+			typename Arg,
+			int N
 	>
-	void iterate_model_attrs(const Tuple&,
-		typename std::enable_if<
-			N >= std::tuple_size<Tuple>::value
-		>::type * = 0) {
+	void for_each_attr(
+			const Tuple&,
+			Arg&,
+			typename std::enable_if<
+					N >= std::tuple_size<Tuple>::value
+			>::type * = 0) {
 	}
 
 private:
-//	model_type current;
-	model_type original;
+	record_type original;
+};
 
-	template<typename T>
-	struct attr_modified {
-		const Mod& model;
-		attr_modified(const Mod& model) :
-			model { model } {
+template<typename A, typename M>
+class model_accessor {
+public:
+	using attr_type = A;
+	using model_type = M;
+	using record_type = typename M::record_type;
+
+	const attr_type& _attr;
+	model_type& _model;
+
+	model_accessor(const A& a, M& m) :
+			_attr { a }, _model { m } {
+	}
+	record_type& get_data() {
+		return _model.data;
+	}
+	record_type& get_original() {
+		return _model.original;
+	}
+};
+
+template<typename A, typename M>
+class attr_modified: public model_accessor<A, M> {
+public:
+	using attr_type = A;
+	using model_type = M;
+
+	attr_modified(const A& a, M& m) :
+			model_accessor<A, M> { a, m } {
+	}
+	void operator()(std::vector<std::string>& ret) {
+		auto attr = this->_attr.second;
+
+		if (this->get_data().*attr != this->get_original().*attr) {
+			ret.push_back(this->_attr.first);
 		}
-		void operator()(T attr_desc) {
-//			auto attr = attr_desc.second;
-//
-//			if (model.current.*attr != model.original.*attr) {
-//				std::cout << attr_desc.first << " is modified: " << model.current.*attr << ", " << model.original.*attr << std::endl;
-//			}
-		}
-	};
+	}
 };
 
 }
