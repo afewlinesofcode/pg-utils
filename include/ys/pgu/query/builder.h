@@ -137,7 +137,7 @@ public:
     return append_section(_orderby, v);
   }
   
-  builder& operator&(const query::relations& v) {
+  builder_type& operator&(const query::relations& v) {
     return append_section(_relations, v);
   }
   
