@@ -5,8 +5,8 @@
  *      Author: stas
  */
 
-#ifndef YS_PGU_QUERY_H
-#define YS_PGU_QUERY_H
+#ifndef YS_PGU_QUERY_H_
+#define YS_PGU_QUERY_H_
 
 #include <ys/pgu/query/builder.h>
 #include <ys/pgu/query/cond.h>
@@ -18,11 +18,11 @@ namespace query {
 using _ = cond;
 
 cond operator"" _c(const char* s) {
-	return cond { s };
+  return cond { s };
 }
 
 cond operator"" _c(const char* s, size_t size) {
-	return cond { s };
+  return cond { s };
 }
 
 /*!
@@ -31,7 +31,7 @@ cond operator"" _c(const char* s, size_t size) {
  * @return
  */
 builder<select> select_from(const std::string& relation) {
-	return builder<select> { } & relations { relation };
+  return builder<select>{} & relations { relation };
 }
 
 /*!
@@ -40,7 +40,7 @@ builder<select> select_from(const std::string& relation) {
  * @return
  */
 builder<insert> insert_into(const std::string& relation) {
-	return builder<insert>(relation);
+  return builder<insert>(relation);
 }
 
 /*!
@@ -49,7 +49,7 @@ builder<insert> insert_into(const std::string& relation) {
  * @return
  */
 builder<update> update_in(const std::string& relation) {
-	return builder<update>(relation);
+  return builder<update>(relation);
 }
 
 /*!
@@ -58,11 +58,11 @@ builder<update> update_in(const std::string& relation) {
  * @return
  */
 builder<remove> delete_from(const std::string& relation) {
-	return builder<remove>(relation);
+  return builder<remove>(relation);
 }
 
 } /* namespace query */
 } /* namespace pgu */
 } /* namespace ys */
 
-#endif /* YS_PGU_QUERY_H */
+#endif /* YS_PGU_QUERY_H_ */

@@ -16,12 +16,12 @@ namespace query {
 
 class having: public basic_cond<having> {
 public:
-	using basic_cond::basic_cond;
-	using basic_cond::operator=;
+  using basic_cond::basic_cond;
+  using basic_cond::operator=;
 
-	std::string str() const {
-		return empty() ? "" : "having " + cstr();
-	}
+  std::string str() const {
+    return empty() ? "" : "having " + cstr();
+  }
 };
 
 } /* namespace query */

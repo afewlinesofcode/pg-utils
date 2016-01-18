@@ -16,12 +16,12 @@ namespace query {
 
 class offset: public ys::basic_expr<offset> {
 public:
-	using basic_expr::basic_expr;
-	using basic_expr::operator=;
+  using basic_expr::basic_expr;
+  using basic_expr::operator=;
 
-	std::string str() const {
-		return empty() ? "" : "offset " + cstr();
-	}
+  std::string str() const {
+    return empty() ? "" : "offset " + cstr();
+  }
 };
 
 } /* namespace query */

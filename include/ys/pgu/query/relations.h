@@ -16,8 +16,8 @@ namespace query {
 
 class relations: public basic_expr<relations> {
 public:
-	using basic_expr::basic_expr;
-	using basic_expr::operator=;
+  using basic_expr::basic_expr;
+  using basic_expr::operator=;
 };
 
 } /* namespace query */

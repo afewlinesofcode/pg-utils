@@ -5,185 +5,415 @@
  *      Author: stas
  */
 
-#ifndef YS_BASIC_EXPR_H
-#define YS_BASIC_EXPR_H
+#ifndef YS_BASIC_EXPR_H_
+#define YS_BASIC_EXPR_H_
 
 #include <string>
 
 namespace ys {
 
+/**
+ * Provides the member type in the case of T is arithmetic.
+ */
 template<typename T>
-using arithmetic_t = typename std::enable_if<std::is_arithmetic<T>::value>::type;
+struct is_arithmetic {
+  using type = std::enable_if<std::is_arithmetic<T>::value, T>;
+};
 
+/**
+ * A helper type for is_arithmetic.
+ */
+template<typename T>
+using is_arithmetic_type = typename is_arithmetic<T>::type;
+
+/**
+ * Base class for building string-based typed expressions.
+ */
 template<typename E>
 class basic_expr {
-	template<typename U>
-	friend class basic_expr;
+  template<typename U>
+  friend class basic_expr;
+
 public:
-	using expr_type = E;
-	using basic_expr_type = basic_expr<E>;
+  /**
+   * A typedef containing type for which basic_expr is being used.
+   */
+  using expr_type = E;
 
-	basic_expr() = default;
-	basic_expr(const basic_expr&) = default;
-	basic_expr(basic_expr&&) = default;
-	template<typename U>
-	basic_expr(const basic_expr<U>& e) :
-		_str { e._str } {
-	}
-	template<typename U>
-	basic_expr(basic_expr<U>&& e) :
-		_str { std::move(e._str) } {
-	}
+  /**
+   * A self type.
+   */
+  using basic_expr_type = basic_expr<E>;
 
-	explicit basic_expr(const std::string& str) :
-		_str { str } {
-	}
-	explicit basic_expr(std::string&& str) :
-		_str { std::move(str) } {
-	}
-	explicit basic_expr(const char* v) :
-		_str { v } {
-	}
-	template<typename U, typename = arithmetic_t<U>>
-	explicit basic_expr(U v) {
-		_str = std::to_string(v);
-	}
+  /**
+   * Default constructor.
+   */
+  basic_expr() = default;
 
-	basic_expr& operator=(const basic_expr&) = default;
-	basic_expr& operator=(basic_expr&&) = default;
-	template<typename U>
-	basic_expr& operator=(const basic_expr<U>& e) {
-		_str = e._str;
-		return *this;
-	}
-	template<typename U>
-	basic_expr& operator=(basic_expr<U>&& e) {
-		using namespace std;
-		swap(_str, e._str);
-		return *this;
-	}
-	basic_expr& operator=(const std::string& s) {
-		_str = s;
-		return *this;
-	}
-	basic_expr& operator=(std::string&& s) {
-		using namespace std;
-		swap(_str, s);
-		return *this;
-	}
-	basic_expr& operator=(const char* s) {
-		_str = s;
-		return *this;
-	}
-	template<typename U, typename = arithmetic_t<U>>
-	basic_expr& operator=(U v) {
-		using namespace std;
-		_str = to_string(v);
-		return *this;
-	}
+  /**
+   * Default copy-constructor.
+   * @param
+   */
+  basic_expr(basic_expr const&) = default;
 
-	bool empty() const {
-		return _str.empty();
-	}
+  /**
+   * Default move-constructor.
+   * @param
+   */
+  basic_expr(basic_expr&&) = default;
 
-	std::string sep() const {
-		return ", ";
-	}
+  /**
+   * A constructor for copying from an expression of another type.
+   * @param e
+   */
+  template<typename U>
+  basic_expr(basic_expr<U> const& e) :
+    str_ { e._str } {
+  }
 
-	template<typename U>
-	expr_type operator&(const basic_expr<U>& e) {
-		append_sep(e);
-		return *this;
-	};
-	expr_type operator&(const std::string& s) {
-		append_sep(s);
-		return *this;
-	}
-	expr_type operator&(const char* s) {
-		append_sep(s);
-		return *this;
-	}
-	template<typename U, typename = arithmetic_t<U>>
-	expr_type operator&(U v) {
-		append_sep(expr_type{v});
-		return *this;
-	};
+  /**
+   * A constructor for moving from an expression of another type.
+   * @param e
+   */
+  template<typename U>
+  basic_expr(basic_expr<U> && e) :
+    str_ { std::move(e._str) } {
+  }
+  
+  /**
+   * Create an expression from a string.
+   * @param s
+   */
+  explicit basic_expr(std::string const& s) :
+    str_ { s } {
+  }
 
-	std::string str() const {
-		return _str;
-	}
+  /**
+   * Create an expression from an r-value referenced string.
+   * @param s
+   */
+  explicit basic_expr(std::string&& str) :
+    str_ { std::move(str) } {
+  }
 
-	const std::string& cstr() const {
-		return _str;
-	}
+  /**
+   * Create an expression from a C-string.
+   * @param v
+   */
+  explicit basic_expr(char const* v) :
+    str_ { v } {
+  }
 
+  /**
+   * Create an expression from a value of an arithmetic type.
+   * @param v
+   */
+  template<typename U, typename = is_arithmetic_type<U>>
+  explicit basic_expr(U v) {
+    str_ = std::to_string(v);
+  }
+  
+  /**
+   * Default copy-assignment operator.
+   * @param
+   * @return
+   */
+  basic_expr&
+  operator=(basic_expr const&) = default;
+
+  /**
+   * Default move-assignment operator.
+   * @param
+   * @return
+   */
+  basic_expr&
+  operator=(basic_expr&&) = default;
+
+  /**
+   * Copy the expression string from an expression of another type.
+   * @param e
+   * @return
+   */
+  template<typename U>
+  basic_expr&
+  operator=(basic_expr<U> const& e) {
+    str_ = e._str;
+    return *this;
+  }
+
+  /**
+   * Move the expression string from an expression of another type.
+   * @param e
+   * @return
+   */
+  template<typename U>
+  basic_expr&
+  operator=(basic_expr<U> && e) {
+    using namespace std;
+    swap(str_, e._str);
+    return *this;
+  }
+
+  /**
+   * Copy specified string into expression string.
+   * @param s
+   * @return
+   */
+  basic_expr&
+  operator=(std::string const& s) {
+    str_ = s;
+    return *this;
+  }
+
+  /**
+   * Move string into expression string.
+   * @param s
+   * @return
+   */
+  basic_expr&
+  operator=(std::string&& s) {
+    using namespace std;
+    swap(str_, s);
+    return *this;
+  }
+
+  /**
+   * Copy C-string into expression string.
+   * @param s
+   * @return
+   */
+  basic_expr&
+  operator=(char const* s) {
+    str_ = s;
+    return *this;
+  }
+
+  /**
+   * Copy value of an arithmetic type into expression string.
+   * @param s
+   * @return
+   */
+  template<typename U, typename = is_arithmetic_type<U>>
+  basic_expr&
+  operator=(U v) {
+    using namespace std;
+    str_ = to_string(v);
+    return *this;
+  }
+  
+  /**
+   * Check whether expression is empty.
+   * @return
+   */
+  bool
+  empty() const {
+    return str_.empty();
+  }
+  
+  /**
+   * Get expression separator for appending.
+   * @return
+   */
+  std::string
+  sep() const {
+    return " ";
+  }
+  
+  /**
+   * Append an expression of another type.
+   * @param e
+   * @return
+   */
+  template<typename U>
+  expr_type
+  operator&(basic_expr<U> const& e) {
+    append_sep(e);
+    return *this;
+  }
+
+  /**
+   * Append a string.
+   * @param s
+   * @return
+   */
+  expr_type
+  operator&(std::string const& s) {
+    append_sep(s);
+    return *this;
+  }
+
+  /**
+   * Append a C-string.
+   * @param s
+   * @return
+   */
+  expr_type
+  operator&(char const* s) {
+    append_sep(s);
+    return *this;
+  }
+
+  /**
+   * Append a value of an arithmetic type.
+   * @param v
+   * @return
+   */
+  template<typename U, typename = is_arithmetic_type<U>>
+  expr_type
+  operator&(U v) {
+    append_sep(expr_type { v });
+    return *this;
+  }
+
+  /**
+   * Build an expression string.
+   * @return
+   */
+  std::string
+  str() const {
+    return str_;
+  }
+  
+  /**
+   * Get an expression string.
+   * @return
+   */
+  std::string const&
+  cstr() const {
+    return str_;
+  }
+  
 protected:
-	void append(const std::string& s) {
-		_str.append(s);
-	}
-	void append(const char* s) {
-		append(std::string{s});
-	}
-	template<typename U, typename = arithmetic_t<U>>
-	void append(U v) {
-		append(to_string(v));
-	}
-	template<typename Arg, typename ...Args>
-	void append(const Arg& arg, const Args& ...args) {
-		append(arg);
-		append(args...);
-	}
-	template<typename U>
-	void append_sep(const basic_expr<U>& e) {
-		append_sep(e._str);
-	}
-	void append_sep(const std::string& s) {
-		append_sep(s, static_cast<expr_type>(*this).sep());
-	}
-	void append_sep(const char* s) {
-		append_sep(std::string{s});
-	}
-	template<typename U, typename = arithmetic_t<U>>
-	void append_sep(U v) {
-		using namespace std;
-		append_sep(to_string(v));
-	}
-	template<typename U>
-	void append_sep(const basic_expr<U>& e, const std::string& sep) {
-		append_sep(e._str, sep);
-	}
-	void append_sep(const std::string& s, const std::string& sep) {
-		if (s.empty())
-			goto l_append_exit;
-		if (empty())
-			goto l_append_str;
+  /**
+   * Append a string.
+   * @param s
+   */
+  void
+  append(std::string const& s) {
+    str_.append(s);
+  }
 
-		append(sep);
+  /**
+   * Append a C-string.
+   * @param s
+   */
+  void
+  append(char const* s) {
+    append(std::string { s });
+  }
 
-		l_append_str: append(s);
-		l_append_exit:;
-	}
-	void append_sep(const char* s, const std::string& sep) {
-		append_sep(std::string{s}, sep);
-	}
-	template<typename U, typename = arithmetic_t<U>>
-	void append_sep(U v, const std::string& sep) {
-		using namespace std;
-		append_sep(to_string(v), sep);
-	}
+  /**
+   * Append a value of an arithmetic type.
+   * @param v
+   */
+  template<typename U, typename = is_arithmetic_type<U>>
+  void
+  append(U v) {
+    append(to_string(v));
+  }
 
-	void replace(const std::string& str) {
-		_str = str;
-	}
+  /**
+   * Append multiple values.
+   * @param arg
+   * @param args
+   */
+  template<typename Arg, typename ...Args>
+  void
+  append(Arg const& arg, Args const& ...args) {
+    append(arg);
+    append(args...);
+  }
+
+  /**
+   * Append an expression of another type.
+   * @param e
+   */
+  template<typename U>
+  void
+  append_sep(basic_expr<U> const& e) {
+    append_sep(e._str);
+  }
+
+  void
+  append_sep(std::string const& s) {
+    append_sep(s, static_cast<expr_type>(*this).sep());
+  }
+
+  void
+  append_sep(char const* s) {
+    append_sep(std::string { s });
+  }
+
+  template<typename U, typename = is_arithmetic_type<U>>
+  void
+  append_sep(U v) {
+    using namespace std;
+    append_sep(to_string(v));
+  }
+
+  /**
+   * Append an expression of another type with a specified separator.
+   * @param s Appended string.
+   * @param sep Appended separator.
+   */
+  template<typename U>
+  void
+  append_sep(basic_expr<U> const& e, std::string const& sep) {
+    append_sep(e._str, sep);
+  }
+
+  /**
+   * Append a string (possibly with a specified separator).
+   * @param s Appended string.
+   * @param sep Appended separator.
+   */
+  void
+  append_sep(std::string const& s, std::string const& sep) {
+    if (s.empty())
+      goto l_append_exit;
+    if (empty())
+      goto l_append_str;
+    
+    append(sep);
+    
+    l_append_str: append(s);
+    l_append_exit: ;
+  }
+
+  void
+  append_sep(char const* s, std::string const& sep) {
+    append_sep(std::string { s }, sep);
+  }
+
+  template<typename U, typename = is_arithmetic_type<U>>
+  void
+  append_sep(U v, std::string const& sep) {
+    using namespace std;
+    append_sep(to_string(v), sep);
+  }
+ 
+  /**
+   * Replace the expression string with string specified.
+   * @param str A string to replace with.
+   */
+  void
+  replace(std::string const& str) {
+    str_ = str;
+  }
 private:
-	std::string _str;
+  /**
+   * An expression string/
+   */
+  std::string str_;
 
-	friend std::ostream& operator<<(std::ostream& os, const expr_type& e) {
-		os << e.str();
-		return os;
-	}
+  friend
+  std::ostream&
+  operator<<(std::ostream& os, expr_type const& e) {
+    os << e.str();
+    return os;
+  }
 };
 
 }
 
-#endif /* YS_BASIC_EXPR_H */
+#endif /* YS_BASIC_EXPR_H_ */

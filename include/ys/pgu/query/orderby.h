@@ -16,12 +16,12 @@ namespace query {
 
 class orderby: public ys::basic_expr<orderby> {
 public:
-	using basic_expr::basic_expr;
-	using basic_expr::operator=;
+  using basic_expr::basic_expr;
+  using basic_expr::operator=;
 
-	std::string str() const {
-		return empty() ? "" : "order by " + cstr();
-	}
+  std::string str() const {
+    return empty() ? "" : "order by " + cstr();
+  }
 };
 
 } /* namespace query */

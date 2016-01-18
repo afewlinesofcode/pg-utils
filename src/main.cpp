@@ -12,49 +12,36 @@
 #include <string>
 
 int main(int argc, char* argv[]) {
-	{
-		using namespace ys::pgu;
+	//{
+	//    using namespace ys::pgu;
 
-		model<record> m;
-		m.data.name = "qwe";
-		m.modified();
-	}
+	//    model<record> m;
+	//    m.data.name = "qwe";
+	//    m.modified();
+	//}
 	{
 		using namespace std;
 		using namespace ys::pgu::query;
 
-		cout << (_{12} + _{"qwe"} + 17) << endl;
+		cout << (_ { 12 } + _ { "qwe" } + 17) << endl;
 
 		auto q = select_from("test") &
-			relations{"test1"} &
-			columns{"id, cardid"} &
-			where{"cardtype"_c == "'emergency'" || "cardtype"_c > 0} &
-			groupby{"id, name"} &
+			relations { "test1" } &
+			columns { "id, cardid" } &
+			where { "cardtype"_c == "'emergency'" || "cardtype"_c > 0 } &
+			groupby { "id, name" } &
 			having("count(id)"_c > 1) &
-			orderby{""};
+			orderby { "" };
 
-//		auto ins = insert_into("test") & columns{"id, cardid"} & values{"$arg1, $arg2"};
+			//auto ins = insert_into("test") &
+			//    columns{"id, cardid"} &
+			//    values{"$arg1, $arg2"};
 
 		cout << q.str() << endl;
-//		// desired usage example
-//		q.where() && _w{5
-//				_exists{
-//						_select{ "dummy name" } <<
-//								_rel{ "transport.stoptypes1" } <<
-//								_col{ "stoptypes1.id" } <<
-//								_w{
-//										(_{ "stoptypes1.stopid" } == _{ "stops.id" }) &&
-//												(_{ "stoptypes1.type1id" } == _{ "any($types1Id::int[])" })
-//								}
-//				}
-//		};
+		// TODO: make example with query having lots of options and
+		// nested queries
 	}
 
-	{
-//		using namespace ys::pgu::query;
-
-//		auto q = select_from{"table"} & columns{"qwe"};
-	}
 	return 0;
 }
 

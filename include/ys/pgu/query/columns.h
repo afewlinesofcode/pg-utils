@@ -16,12 +16,12 @@ namespace query {
 
 class columns: public ys::basic_expr<columns> {
 public:
-	using basic_expr::basic_expr;
-	using basic_expr::operator=;
+  using basic_expr::basic_expr;
+  using basic_expr::operator=;
 
-	std::string str() const {
-		return empty() ? "*" : cstr();
-	}
+  std::string str() const {
+    return empty() ? "*" : cstr();
+  }
 };
 
 } /* namespace query */

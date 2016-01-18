@@ -16,12 +16,12 @@ namespace query {
 
 class where: public basic_cond<where> {
 public:
-	using basic_cond::basic_cond;
-	using basic_cond::operator=;
+  using basic_cond::basic_cond;
+  using basic_cond::operator=;
 
-	std::string str() const {
-		return empty() ? "" : "where " + cstr();
-	}
+  std::string str() const {
+    return empty() ? "" : "where " + cstr();
+  }
 };
 
 } /* namespace query */
