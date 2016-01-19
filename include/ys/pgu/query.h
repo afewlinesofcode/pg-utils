@@ -9,13 +9,13 @@
 #define YS_PGU_QUERY_H_
 
 #include <ys/pgu/query/builder.h>
-#include <ys/pgu/query/cond.h>
+#include <ys/pgu/query/expr.h>
 
 namespace ys {
 namespace pgu {
 namespace query {
 
-using _ = cond;
+using _ = expr;
 
 /*!
  * Create a SELECT query builder.

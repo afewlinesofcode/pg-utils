@@ -5,8 +5,8 @@
  *      Author: stas
  */
 
-#ifndef YS_PGU_QUERY_BASIC_COND_H_
-#define YS_PGU_QUERY_BASIC_COND_H_
+#ifndef YS_PGU_QUERY_BASIC_EXPR_H_
+#define YS_PGU_QUERY_BASIC_EXPR_H_
 
 #include <ys/basic_expr.h>
 
@@ -15,12 +15,12 @@ namespace pgu {
 namespace query {
 
 template<typename E>
-class basic_cond: public basic_expr<E> {
+class basic_expr: public ys::basic_expr<E> {
 public:
 	using expr_type = E;
 
-	using basic_expr<E>::basic_expr;
-	using basic_expr<E>::operator=;
+	using ys::basic_expr<E>::basic_expr;
+	using ys::basic_expr<E>::operator=;
 
 	std::string sep() const {
 		return " and ";
@@ -33,7 +33,7 @@ public:
 
 #	define YS_PGU_QUERY_BASIC_COND_OP(op, sep)\
 	template<typename T>\
-	expr_type op(const basic_expr<T>& e) {\
+	expr_type op(const ys::basic_expr<T>& e) {\
 		this->append_sep(e, sep);\
 		return *this;\
 	}\
@@ -74,4 +74,4 @@ public:
 }
 }
 
-#endif /* YS_PGU_QUERY_BASIC_COND_H_ */
+#endif /* YS_PGU_QUERY_BASIC_EXPR_H_ */

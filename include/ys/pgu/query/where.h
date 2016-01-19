@@ -8,16 +8,16 @@
 #ifndef YS_PGU_QUERY_WHERE_H_
 #define YS_PGU_QUERY_WHERE_H_
 
-#include <ys/pgu/query/basic_cond.h>
+#include <ys/pgu/query/basic_expr.h>
 
 namespace ys {
 namespace pgu {
 namespace query {
 
-class where: public basic_cond<where> {
+class where: public basic_expr<where> {
 public:
-	using basic_cond::basic_cond;
-	using basic_cond::operator=;
+	using basic_expr::basic_expr;
+	using basic_expr::operator=;
 };
 
 } /* namespace query */

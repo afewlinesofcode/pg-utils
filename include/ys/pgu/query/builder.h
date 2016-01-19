@@ -53,8 +53,8 @@ public:
 
 	using builder_type = query::builder<Type>;
 
-	using basic_expr<builder<Type>>::basic_expr;
-	using basic_expr<builder<Type>>::operator=;
+	using ys::basic_expr<builder<Type>>::basic_expr;
+	using ys::basic_expr<builder<Type>>::operator=;
 
 	template<typename T = typename std::enable_if<
 		ys::none_of(Type, query::remove), query::columns>>
@@ -198,15 +198,6 @@ std::string assemble<type::select>(const builder<type::select>& b) {
 
 	if (!b.offset_.empty())
 		s << " offset " << b.offset_;
-	
-	//s << "select " << b.columns_
-	//    << " from " << b.relations_
-	//    << " " << b.where_
-	//    << " " << b.group_by_
-	//    << " " << b.having_
-	//    << " " << b.order_by_
-	//    << " " << b.limit_
-	//    << " " << b.offset_;
 
 	return s.str();
 }

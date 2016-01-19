@@ -10,7 +10,6 @@
 
 #include <string>
 #include <ys/traits.h>
-#include <iostream>
 #include <typeinfo>
 
 namespace ys {

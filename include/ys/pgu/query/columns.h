@@ -9,7 +9,6 @@
 #define YS_PGU_QUERY_COLUMNS_H_
 
 #include <ys/basic_expr.h>
-#include <iostream>
 
 namespace ys {
 namespace pgu {

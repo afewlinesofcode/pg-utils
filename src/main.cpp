@@ -20,7 +20,6 @@ int main(int argc, char* argv[]) {
 	//    m.modified();
 	//}
 	{
-		using namespace std;
 		using namespace ys::pgu::query;
 
 		auto q = select_from("users") &
@@ -39,7 +38,7 @@ int main(int argc, char* argv[]) {
 
 		q & order_by("name");
 
-		cout << q.str() << endl;
+		std::cout << q.str() << std::endl;
 	}
 
 	return 0;
