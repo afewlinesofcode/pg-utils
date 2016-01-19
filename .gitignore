@@ -2,3 +2,5 @@ Debug
 .cproject
 .project
 Debug
+*.swp
+*.swo
