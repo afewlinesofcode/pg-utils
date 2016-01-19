@@ -7,3 +7,6 @@ dist/pg-util: dist
 
 dist:
 	mkdir -p dist
+
+clean:
+	rm -f dist/pg-util

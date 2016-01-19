@@ -1,8 +1,10 @@
 /*
- * traits.h
+ * @author    Stanislav Yaranov <stanislav.yaranov@gmail.com>
+ * @date      2015-12-04
  *
- *  Created on: 4 дек. 2015 г.
- *      Author: stas
+ * Log:
+ *     2015-12-04
+ *         Created.
  */
 
 #ifndef YS_TRAITS_H_
@@ -11,6 +13,14 @@
 #include <type_traits>
 
 namespace ys {
+
+/**
+ * Provides the member type in the case of T is arithmetic.
+ */
+template<typename T>
+struct is_arithmetic 
+		: public std::enable_if<std::is_arithmetic<T>::value, T> {
+};
 
 /**
  * Required overload for any_of with parameters pack.

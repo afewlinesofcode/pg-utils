@@ -17,21 +17,21 @@ namespace query {
 template<typename E>
 class basic_cond: public basic_expr<E> {
 public:
-  using expr_type = E;
+	using expr_type = E;
 
-  using basic_expr<E>::basic_expr;
-  using basic_expr<E>::operator=;
+	using basic_expr<E>::basic_expr;
+	using basic_expr<E>::operator=;
 
-  std::string sep() const {
-    return " and ";
-  }
-  
-  expr_type operator()() {
-    this->replace("(" + this->cstr() + ")");
-    return *this;
-  }
-  
-#define YS_PGU_QUERY_BASIC_COND_OP(op, sep)\
+	std::string sep() const {
+		return " and ";
+	}
+
+	expr_type operator()() {
+		this->replace("(" + this->cstr() + ")");
+		return *this;
+	}
+
+#	define YS_PGU_QUERY_BASIC_COND_OP(op, sep)\
 	template<typename T>\
 	expr_type op(const basic_expr<T>& e) {\
 		this->append_sep(e, sep);\
@@ -49,24 +49,25 @@ public:
 		this->append_sep(s, sep);\
 		return *this;\
 	}\
-	template<typename T, typename = ys::is_arithmetic_type<T>>\
+	template<typename T, typename = typename ys::is_arithmetic<T>::type>\
 	expr_type op(T v) {\
 		this->append_sep(v, sep);\
 		return *this;\
 	}
-  
-  YS_PGU_QUERY_BASIC_COND_OP(operator+, " + ");
-  YS_PGU_QUERY_BASIC_COND_OP(operator-, " - ");
-  YS_PGU_QUERY_BASIC_COND_OP(operator*, " * ");
-  YS_PGU_QUERY_BASIC_COND_OP(operator/, " / ");
-  YS_PGU_QUERY_BASIC_COND_OP(operator==, " = ");
-  YS_PGU_QUERY_BASIC_COND_OP(operator!=, " <> ");
-  YS_PGU_QUERY_BASIC_COND_OP(operator<, " < ");
-  YS_PGU_QUERY_BASIC_COND_OP(operator<=, " <= ");
-  YS_PGU_QUERY_BASIC_COND_OP(operator>, " > ");
-  YS_PGU_QUERY_BASIC_COND_OP(operator>=, " >= ");
-  YS_PGU_QUERY_BASIC_COND_OP(operator&&, " and ");
-  YS_PGU_QUERY_BASIC_COND_OP(operator||, " or ");
+//	YS_PGU_QUERY_BASIC_COND_OP
+
+	YS_PGU_QUERY_BASIC_COND_OP(operator+, " + ");
+	YS_PGU_QUERY_BASIC_COND_OP(operator-, " - ");
+	YS_PGU_QUERY_BASIC_COND_OP(operator*, " * ");
+	YS_PGU_QUERY_BASIC_COND_OP(operator/, " / ");
+	YS_PGU_QUERY_BASIC_COND_OP(operator==, " = ");
+	YS_PGU_QUERY_BASIC_COND_OP(operator!=, " <> ");
+	YS_PGU_QUERY_BASIC_COND_OP(operator<, " < ");
+	YS_PGU_QUERY_BASIC_COND_OP(operator<=, " <= ");
+	YS_PGU_QUERY_BASIC_COND_OP(operator>, " > ");
+	YS_PGU_QUERY_BASIC_COND_OP(operator>=, " >= ");
+	YS_PGU_QUERY_BASIC_COND_OP(operator&&, " and ");
+	YS_PGU_QUERY_BASIC_COND_OP(operator||, " or ");
 };
 
 }

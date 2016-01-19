@@ -4,7 +4,7 @@
  * @author    Stanislav yaranov <stanislav.yaranov@gmail.com>
  * @date      2016-01-18
  *
- * History:
+ * Log:
  *     2016-01-18
  *         Created.
  */

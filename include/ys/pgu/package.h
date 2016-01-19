@@ -4,7 +4,7 @@
  * @author    Stanislav Yaranov
  * @date      2016-01-18
  * 
- * History:
+ * Log:
  *     2016-01-16
  *         Created.
  */
