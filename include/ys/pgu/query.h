@@ -23,7 +23,7 @@ using _ = cond;
  * @return
  */
 builder<select> select_from(const std::string& relation) {
-	return builder<select>{} & relations { relation };
+	return builder<select> { } & relations { relation };
 }
 
 /*!

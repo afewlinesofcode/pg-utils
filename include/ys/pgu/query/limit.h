@@ -18,10 +18,6 @@ class limit: public ys::basic_expr<limit> {
 public:
 	using basic_expr::basic_expr;
 	using basic_expr::operator=;
-
-	std::string str() const {
-		return empty() ? "" : "limit " + cstr();
-	}
 };
 
 } /* namespace query */

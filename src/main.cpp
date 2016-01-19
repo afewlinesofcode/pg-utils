@@ -23,23 +23,23 @@ int main(int argc, char* argv[]) {
 		using namespace std;
 		using namespace ys::pgu::query;
 
-		cout << (_{ 12 }) << endl;
+		auto q = select_from("users") &
+			where("city_id = $1") &
+			group_by("age") &
+			having(_("count(1)") > 10);
+		
+		q.where() || (
+			_("city_id in ") &
+				(
+				 	select_from("avail_cities") &
+						columns("id") &
+						(where("country_id") == 12)
+				)
+		);
 
-		auto q = select_from("test") &
-			relations { "test1" } &
-			columns { "id, cardid" } &
-			where { _{"cardtype"} == "'emergency'" || _{"cardtype"} > 0 } &
-			groupby { "id, name" } &
-			having(_{"count(id)"} > 1) &
-			orderby { "" };
-
-		//auto ins = insert_into("test") &
-		//    columns{"id, cardid"} &
-		//    values{"$arg1, $arg2"};
+		q & order_by("name");
 
 		cout << q.str() << endl;
-		// TODO: make example with query having lots of options and
-		// nested queries
 	}
 
 	return 0;

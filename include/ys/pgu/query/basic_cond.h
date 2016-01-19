@@ -27,7 +27,7 @@ public:
 	}
 
 	expr_type operator()() {
-		this->replace("(" + this->cstr() + ")");
+		this->replace("(" + expr_of(*this).str() + ")");
 		return *this;
 	}
 

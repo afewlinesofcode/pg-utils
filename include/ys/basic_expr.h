@@ -10,6 +10,8 @@
 
 #include <string>
 #include <ys/traits.h>
+#include <iostream>
+#include <typeinfo>
 
 namespace ys {
 
@@ -18,9 +20,6 @@ namespace ys {
  */
 template<typename E>
 class basic_expr {
-	template<typename U>
-	friend class basic_expr;
-
 public:
 	/**
 	 * A typedef containing type for which basic_expr is being used.
@@ -31,6 +30,15 @@ public:
 	 * A self type.
 	 */
 	using basic_expr_type = basic_expr<E>;
+
+	/**
+	 * Get a reference to the target expr type.
+	 */
+	template<typename U>
+	U const&
+	expr_of(basic_expr<U> const& e) const {
+		return static_cast<U const&>(e);
+	}
 
 	/**
 	 * Default constructor.
@@ -50,21 +58,12 @@ public:
 	basic_expr(basic_expr&&) = default;
 
 	/**
-	 * A constructor for copying from an expression of another type.
+	 * Copy-constructor.
 	 * @param e
 	 */
 	template<typename U>
 	basic_expr(basic_expr<U> const& e) :
-		str_ { e.str_ } {
-	}
-
-	/**
-	 * A constructor for moving from an expression of another type.
-	 * @param e
-	 */
-	template<typename U>
-	basic_expr(basic_expr<U> && e) :
-		str_ { std::move(e.str_) } {
+		str_ { expr_of(e).str() } {
 	}
 
 	/**
@@ -117,32 +116,19 @@ public:
 	operator=(basic_expr&&) = default;
 
 	/**
-	 * Copy the expression string from an expression of another type.
+	 * Copy assignment.
 	 * @param e
 	 * @return
 	 */
 	template<typename U>
 	basic_expr&
 	operator=(basic_expr<U> const& e) {
-		str_ = e.str_;
+		str_ = expr_of(e).str();
 		return *this;
 	}
 
 	/**
-	 * Move the expression string from an expression of another type.
-	 * @param e
-	 * @return
-	 */
-	template<typename U>
-	basic_expr&
-	operator=(basic_expr<U> && e) {
-		using namespace std;
-		swap(str_, e.str_);
-		return *this;
-	}
-
-	/**
-	 * Copy specified string into expression string.
+	 * Copy specified string into the expression string.
 	 * @param s
 	 * @return
 	 */
@@ -153,7 +139,7 @@ public:
 	}
 
 	/**
-	 * Move string into expression string.
+	 * Move string into the expression string.
 	 * @param s
 	 * @return
 	 */
@@ -165,7 +151,7 @@ public:
 	}
 
 	/**
-	 * Copy C-string into expression string.
+	 * Copy C-string into the expression string.
 	 * @param s
 	 * @return
 	 */
@@ -176,20 +162,19 @@ public:
 	}
 
 	/**
-	 * Copy value of an arithmetic type into expression string.
+	 * Copy value of an arithmetic type into the expression string.
 	 * @param s
 	 * @return
 	 */
 	template<typename U, typename = typename is_arithmetic<U>::type>
 	basic_expr&
 	operator=(U v) {
-		using namespace std;
-		str_ = to_string(v);
+		str_ = std::to_string(v);
 		return *this;
 	}
 
 	/**
-	 * Check whether expression is empty.
+	 * Check whether the expression is empty.
 	 * @return
 	 */
 	bool
@@ -198,7 +183,7 @@ public:
 	}
 
 	/**
-	 * Get expression separator for appending.
+	 * Get the expression separator for appending.
 	 * @return
 	 */
 	std::string
@@ -253,7 +238,7 @@ public:
 	}
 
 	/**
-	 * Build an expression string.
+	 * Get the expression string.
 	 * @return
 	 */
 	std::string
@@ -261,16 +246,15 @@ public:
 		return str_;
 	}
 
+protected:
 	/**
-	 * Get an expression string.
-	 * @return
+	 * Get const reference to the expression string.
 	 */
-	std::string const&
+	const std::string&
 	cstr() const {
 		return str_;
 	}
 
-protected:
 	/**
 	 * Append a string.
 	 * @param s
@@ -296,7 +280,7 @@ protected:
 	template<typename U, typename = typename is_arithmetic<U>::type>
 	void
 	append(U v) {
-		append(to_string(v));
+		append(std::to_string(v));
 	}
 
 	/**
@@ -318,12 +302,12 @@ protected:
 	template<typename U>
 	void
 	append_sep(basic_expr<U> const& e) {
-		append_sep(e.str_);
+		append_sep(expr_of(e).str());
 	}
 
 	void
 	append_sep(std::string const& s) {
-		append_sep(s, static_cast<expr_type>(*this).sep());
+		append_sep(s, expr_of(*this).sep());
 	}
 
 	void
@@ -334,8 +318,7 @@ protected:
 	template<typename U, typename = typename is_arithmetic<U>::type>
 	void
 	append_sep(U v) {
-		using namespace std;
-		append_sep(to_string(v));
+		append_sep(std::to_string(v));
 	}
 
 	/**
@@ -346,7 +329,7 @@ protected:
 	template<typename U>
 	void
 	append_sep(basic_expr<U> const& e, std::string const& sep) {
-		append_sep(e.str_, sep);
+		append_sep(expr_of(e).str(), sep);
 	}
 
 	/**
@@ -375,8 +358,7 @@ protected:
 	template<typename U, typename = typename is_arithmetic<U>::type>
 	void
 	append_sep(U v, std::string const& sep) {
-		using namespace std;
-		append_sep(to_string(v), sep);
+		append_sep(std::to_string(v), sep);
 	}
 
 	/**
