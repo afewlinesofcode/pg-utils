@@ -6,26 +6,55 @@ I will collect here different postgresql utilities which are helpful for me.
 ys::pgu::query
 --------------
 
-A utility for building queries in run-time.
+A postgresql query builder utility.
 
-### Examples
+### Example
+
+**C++**
 
 ```cpp
-{
-	using namespace ys::pgu::query;
+#include <ys/pgu/query.h>
+#include <iostream>
 
-	auto q = select_from("users") &
-		where("city_id = $1") &
-		groupby("age") &
-		having(_("count(1)") > 10};
-	
-	q.where() | (
-		_("city_id in ") &
-			(select_from("avail_cities") &
-				columns("id") &
-				(where("country_id") == 12)()
-	);
+int main(int argc, char* argv[]) {
+	{
+		using namespace ys::pgu::query;
 
-	q & orderby("name");
+		auto q = select_from("users") &
+			where("city_id = $1") &
+			group_by("age") &
+			having(_("count(1)") > 10);
+		
+		q.where() || (
+			_("city_id in ") &
+				_(
+					select_from("avail_cities") &
+						columns("id") &
+						(where("country_id") == 12)
+				)()
+		);
+
+		q.where()() && _("not blocked");
+
+		q & columns("age") &
+			order_by("name");
+
+		q & columns("count(1) as cnt");
+
+		std::cout << q.str() << std::endl;
+	}
+
+	return 0;
 }
+```
+**SQL**
+```sql
+-- Result:
+select age, count(1) as cnt from users
+	where
+		(city_id = $1 or city_id in (select id from avail_cities where country_id = 12))
+		and not blocked
+	group by age
+	having count(1) > 10
+	order by name
 ```

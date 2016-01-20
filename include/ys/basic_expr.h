@@ -31,12 +31,21 @@ public:
 	using basic_expr_type = basic_expr<E>;
 
 	/**
-	 * Get a reference to the target expr type.
+	 * Get a const reference to the target expr type.
 	 */
 	template<typename U>
 	U const&
 	expr_of(basic_expr<U> const& e) const {
 		return static_cast<U const&>(e);
+	}
+	
+	/**
+	 * Get a reference to the target expr type.
+	 */
+	template<typename U>
+	U&
+	expr_of(basic_expr<U>& e) {
+		return static_cast<U&>(e);
 	}
 
 	/**
@@ -196,10 +205,10 @@ public:
 	 * @return
 	 */
 	template<typename U>
-	expr_type
+	expr_type&
 	operator&(basic_expr<U> const& e) {
 		append_sep(e);
-		return *this;
+		return this->expr_of(*this);
 	}
 
 	/**
@@ -207,10 +216,10 @@ public:
 	 * @param s
 	 * @return
 	 */
-	expr_type
+	expr_type&
 	operator&(std::string const& s) {
 		append_sep(s);
-		return *this;
+		return this->expr_of(*this);
 	}
 
 	/**
@@ -218,10 +227,10 @@ public:
 	 * @param s
 	 * @return
 	 */
-	expr_type
+	expr_type&
 	operator&(char const* s) {
 		append_sep(s);
-		return *this;
+		return this->expr_of(*this);
 	}
 
 	/**
@@ -230,10 +239,10 @@ public:
 	 * @return
 	 */
 	template<typename U, typename = typename is_arithmetic<U>::type>
-	expr_type
+	expr_type&
 	operator&(U v) {
 		append_sep(expr_type { v });
-		return *this;
+		return this->expr_of(*this);
 	}
 
 	/**

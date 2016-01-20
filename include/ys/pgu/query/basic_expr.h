@@ -22,37 +22,39 @@ public:
 	using ys::basic_expr<E>::basic_expr;
 	using ys::basic_expr<E>::operator=;
 
-	std::string sep() const {
-		return " and ";
-	}
-
-	expr_type operator()() {
-		this->replace("(" + expr_of(*this).str() + ")");
-		return *this;
+	expr_type&
+	operator()() {
+		this->replace("(" + this->expr_of(*this).str() + ")");
+		return this->expr_of(*this);
 	}
 
 #	define YS_PGU_QUERY_BASIC_COND_OP(op, sep)\
 	template<typename T>\
-	expr_type op(const ys::basic_expr<T>& e) {\
+	expr_type&\
+	op(const ys::basic_expr<T>& e) {\
 		this->append_sep(e, sep);\
-		return *this;\
+		return this->expr_of(*this);\
 	}\
-	expr_type op(const std::string& s) {\
+	expr_type&\
+	op(const std::string& s) {\
 		this->append_sep(s, sep);\
-		return *this;\
+		return this->expr_of(*this);\
 	}\
-	expr_type op(std::string&& s) {\
+	expr_type&\
+	op(std::string&& s) {\
 		this->append_sep(s, sep);\
-		return *this;\
+		return this->expr_of(*this);\
 	}\
-	expr_type op(const char* s) {\
+	expr_type&\
+	op(const char* s) {\
 		this->append_sep(s, sep);\
-		return *this;\
+		return this->expr_of(*this);\
 	}\
 	template<typename T, typename = typename ys::is_arithmetic<T>::type>\
-	expr_type op(T v) {\
+	expr_type&\
+	op(T v) {\
 		this->append_sep(v, sep);\
-		return *this;\
+		return this->expr_of(*this);\
 	}
 //	YS_PGU_QUERY_BASIC_COND_OP
 
