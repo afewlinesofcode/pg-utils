@@ -1,12 +1,25 @@
 # TODO: Don't have time for autotools at this moment. Will use them later.
 
-all: dist/pg-util
+TARGET=pg-util
+CXXFLAGS=-std=c++14 -Iinclude
+LDFLAGS=
+HDRS=$(shell find include/ -type f -name '*.h')
+SRCS=$(shell find src/ -type f -name '*.cpp')
+OBJS=$(SRCS:.cpp=.o)
 
-dist/pg-util: dist
-	g++ -o dist/pg-util src/main.cpp -std=c++14 -I./include
+.PHONY: clean
 
-dist:
-	mkdir -p dist
+all: $(TARGET)
+
+$(TARGET): $(OBJS)
+	g++ -o $@ $(OBJS)
+
+%.o: %.cpp
+	g++ -c $(CXXFLAGS) -o $@ $<
 
 clean:
-	rm -f dist/pg-util
+	rm -f $(OBJS)
+	rm -f $(TARGET)
+
+run: $(TARGET)
+	./$(TARGET)
